@@ -198,7 +198,7 @@ header img{animation:glow 3.2s ease-in-out infinite}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty">🔎 ไม่พบแอปที่ค้นหา กรุณาลองคำค้นอื่น</div>
 </main>
-<footer>SBK Center Hub v6 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ</footer>
+<footer>SBK Center Hub v7 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ</footer>
 <div id="toast"></div>
 
 <script>
@@ -208,9 +208,6 @@ const SPLASH_MS = 3000;          // แสดงโลโก้ 3 วินา�
 const B = 'https://center124-glitch.github.io/';
 const APPS = [
  {n:'เปรียบเทียบยอดรายวัน SDC vs SBK',d:'บันทึกและรายงานเปรียบเทียบยอดคน/รถ/MRT/EBM ระหว่าง SDC กับ SBK',i:'📊',c:'a',u:'SDC-vs-SBK-Daily-Compare/',g:'#4f46e5,#06b6d4'},
- {n:'Dashboard HLW',d:'ภาพรวมข้อมูล HLW (V7)',i:'📈',c:'a',u:'Dashboard_HLW_V7/',g:'#7c3aed,#db2777'},
- {n:'สรุปยอดยานพาหนะ HLW',d:'รายงานสรุปยอดรถยนต์/ยานพาหนะ',i:'🚙',c:'a',u:'HLW-Car-Vehicle-Summary-Report/',g:'#f97316,#ef4444'},
- {n:'สรุปยอดลูกค้า HLW',d:'รายงานสรุปยอดลูกค้า',i:'👥',c:'a',u:'HLW-Customer-Summary-Report/',g:'#10b981,#06b6d4'},
  {n:'รายงาน Personality ประจำวัน',d:'ผลตรวจ Personality ประจำวัน แยกตามกะ นำเข้า Excel/Sheets',i:'🏆',c:'a',u:'Daily-Personality-Report/',g:'#f59e0b,#ef4444'},
  {n:'ตารางเวร รปภ.',d:'ตารางเวรและเช็คการมาทำงาน เจ้าหน้าที่รักษาความปลอดภัย',i:'🛡️',c:'s',u:'Security-Working-Schedule/',g:'#2563eb,#7c3aed'},
  {n:'ฐานข้อมูล CCTV (V42)',d:'ทะเบียนและตำแหน่งกล้องวงจรปิด',i:'📹',c:'s',u:'CCTV-Database-V42/',g:'#0ea5e9,#4f46e5'},
@@ -218,7 +215,10 @@ const APPS = [
  {n:'Dashboard รถยนต์พนักงานร้านค้า',d:'สรุปยอดและตรวจสอบข้อมูลรถยนต์พนักงานร้านค้า (ต้องใช้รหัสผ่านเจ้าหน้าที่)',i:'🏪',c:'p',u:'SBK-Shop-Vehicle-Dashboard/',g:'#0891b2,#2563eb'},
  {n:'Dashboard รถยนต์พนักงาน',d:'สรุปและตรวจสอบข้อมูลรถยนต์พนักงาน แยกตามแผนก (ต้องใช้รหัสผ่านเจ้าหน้าที่)',i:'🪪',c:'p',u:'SBK-Staff-Vehicle-Dashboard/',g:'#9333ea,#ec4899'},
  {n:'Car Database Pro',d:'ฐานข้อมูลรถยนต์ในลานจอด',i:'🚗',c:'p',u:'Car_Dadabase_Pro/',g:'#16a34a,#84cc16'},
- {n:'OPS Shop Directory (v12)',d:'ทำเนียบร้านค้าและข้อมูลติดต่อ',i:'🏬',c:'p',u:'OPS_Shop-Directory_v12/',g:'#eab308,#f97316'}
+ {n:'OPS Shop Directory (v12)',d:'ทำเนียบร้านค้าและข้อมูลติดต่อ',i:'🏬',c:'p',u:'OPS_Shop-Directory_v12/',g:'#eab308,#f97316'},
+ {n:'Dashboard HLW',d:'ภาพรวมข้อมูล HLW (V7)',i:'📈',c:'a',u:'Dashboard_HLW_V7/',g:'#7c3aed,#db2777'},
+ {n:'สรุปยอดลูกค้า HLW',d:'รายงานสรุปยอดลูกค้า',i:'👥',c:'a',u:'HLW-Customer-Summary-Report/',g:'#10b981,#06b6d4'},
+ {n:'สรุปยอดยานพาหนะ HLW',d:'รายงานสรุปยอดรถยนต์/ยานพาหนะ',i:'🚙',c:'a',u:'HLW-Car-Vehicle-Summary-Report/',g:'#f97316,#ef4444'}
 ];
 const CATS = [['all','ทั้งหมด'],['a','📊 วิเคราะห์ & รายงาน'],['s','🛡️ รปภ. & CCTV'],['p','🅿️ ลานจอด & ร้านค้า']];
 let lastKey='', cat='all', embed=false, idleT, viewing=null, lastReset=0;
