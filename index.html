@@ -32,7 +32,7 @@ button{font:inherit;cursor:pointer;border:0;color:inherit}
 .o2{width:300px;height:300px;background:#22d3ee;bottom:6%;right:4%;animation-delay:-3s}
 .o3{width:200px;height:200px;background:#f472b6;top:55%;left:55%;animation-delay:-6s}
 @keyframes float{50%{transform:translate(30px,-40px) scale(1.15)}}
-.logo{width:clamp(120px,28vw,170px);filter:drop-shadow(0 12px 28px rgba(0,0,0,.35));animation:pop 1s cubic-bezier(.2,1.4,.4,1) both,bob 3.5s ease-in-out 1s infinite;position:relative}
+.logo{width:clamp(130px,30vw,180px);filter:drop-shadow(0 12px 28px rgba(0,0,0,.35));animation:pop 1s cubic-bezier(.2,1.4,.4,1) both,bob 3.5s ease-in-out 1s infinite,lglow 3.5s ease-in-out 1s infinite;position:relative}
 @keyframes pop{from{transform:scale(.2) rotate(-25deg);opacity:0}}
 @keyframes bob{50%{transform:translateY(-10px)}}
 .scr h1{font-size:clamp(28px,7vw,48px);font-weight:700;letter-spacing:2px;position:relative;text-shadow:0 4px 20px rgba(0,0,0,.3)}
@@ -129,6 +129,7 @@ header img{animation:glow 3.2s ease-in-out infinite}
 .scr{transition:opacity .7s,visibility .7s,transform .7s}.scr.hide{transform:scale(1.1)}
 #viewer.on{animation:up .38s cubic-bezier(.2,.9,.3,1)}
 @keyframes up{from{transform:translateY(40px);opacity:0}}
+@keyframes lglow{50%{filter:drop-shadow(0 14px 36px rgba(253,224,71,.8))}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -136,14 +137,22 @@ header img{animation:glow 3.2s ease-in-out infinite}
 
 <!-- โลโก้แอป (SVG ใช้ซ้ำทุกที่) -->
 <svg width="0" height="0" style="position:absolute"><defs>
- <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde047"/><stop offset="1" stop-color="#f97316"/></linearGradient>
+ <linearGradient id="gbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset=".55" stop-color="#db2777"/><stop offset="1" stop-color="#f97316"/></linearGradient>
+ <linearGradient id="gsh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#db2777"/></linearGradient>
+ <radialGradient id="ghl" cx=".3" cy=".2" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".4"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
  <symbol id="logo" viewBox="0 0 120 120">
-  <rect x="4" y="4" width="112" height="112" rx="28" fill="#fff"/>
-  <path d="M60 18l34 12v26c0 24-15 38-34 46-19-8-34-22-34-46V30z" fill="#4f46e5"/>
-  <path d="M60 18l34 12v26c0 24-15 38-34 46z" fill="#7c3aed"/>
-  <circle cx="60" cy="52" r="17" fill="url(#lg)"/>
-  <path d="M52 60V44h9a6 6 0 010 12h-9" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"/>
-  <path d="M42 80h36" stroke="#22d3ee" stroke-width="5" stroke-linecap="round"/>
+  <rect x="2" y="2" width="116" height="116" rx="30" fill="url(#gbg)" stroke="#fff" stroke-width="3"/>
+  <rect x="2" y="2" width="116" height="116" rx="30" fill="url(#ghl)"/>
+  <circle cx="60" cy="60" r="36" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6" stroke-dasharray="3 4"/>
+  <g stroke="#fff" stroke-opacity=".6" stroke-width="2" stroke-linecap="round">
+   <path d="M60 60L60 24M60 60L91.2 42M60 60L91.2 78M60 60L60 96M60 60L28.8 78M60 60L28.8 42"/></g>
+  <g stroke="#fff" stroke-width="2.5">
+   <circle cx="60" cy="24" r="7" fill="#22d3ee"/><circle cx="91.2" cy="42" r="7" fill="#fde047"/>
+   <circle cx="91.2" cy="78" r="7" fill="#4ade80"/><circle cx="60" cy="96" r="7" fill="#f472b6"/>
+   <circle cx="28.8" cy="78" r="7" fill="#fb923c"/><circle cx="28.8" cy="42" r="7" fill="#a78bfa"/></g>
+  <circle cx="60" cy="60" r="20" fill="#fff"/>
+  <path d="M60 48.5l10 3.8v8.2c0 7-4.4 11.2-10 14-5.6-2.8-10-7-10-14v-8.2z" fill="url(#gsh)"/>
+  <path d="M55 60.5l4 4 7-8.5" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
  </symbol></defs></svg>
 
 <!-- หน้าโลโก้เปิดแอป -->
@@ -189,7 +198,7 @@ header img{animation:glow 3.2s ease-in-out infinite}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty">🔎 ไม่พบแอปที่ค้นหา กรุณาลองคำค้นอื่น</div>
 </main>
-<footer>SBK Center Hub v5 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ</footer>
+<footer>SBK Center Hub v6 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ</footer>
 <div id="toast"></div>
 
 <script>
@@ -309,14 +318,18 @@ $('#splash').addEventListener('pointerdown',enter);
 
 /* ===== 6. ไอคอนแอปบนหน้าจอมือถือ/คอม (สร้างอัตโนมัติ) ===== */
 function makeIcon(size){
- const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d'),s=size/120;
- const g=x.createLinearGradient(0,0,size,size);g.addColorStop(0,'#4f46e5');g.addColorStop(.5,'#db2777');g.addColorStop(1,'#f97316');
- x.fillStyle=g;x.fillRect(0,0,size,size);
- x.scale(s,s);
- x.fillStyle='#fff';x.beginPath();x.moveTo(60,14);x.lineTo(96,27);x.lineTo(96,56);x.quadraticCurveTo(96,86,60,106);x.quadraticCurveTo(24,86,24,56);x.lineTo(24,27);x.closePath();x.fill();
- const h=x.createLinearGradient(0,30,0,80);h.addColorStop(0,'#fde047');h.addColorStop(1,'#f97316');
- x.fillStyle=h;x.beginPath();x.arc(60,54,22,0,7);x.fill();
- x.strokeStyle='#4f46e5';x.lineWidth=7;x.lineCap='round';x.beginPath();x.moveTo(51,65);x.lineTo(51,43);x.lineTo(63,43);x.arc(63,52,9,-1.57,1.57);x.lineTo(51,61);x.stroke();
+ const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');x.scale(size/120,size/120);
+ const g=x.createLinearGradient(0,0,120,120);g.addColorStop(0,'#4f46e5');g.addColorStop(.55,'#db2777');g.addColorStop(1,'#f97316');
+ x.fillStyle=g;x.fillRect(0,0,120,120);
+ const h=x.createRadialGradient(36,24,2,36,24,84);h.addColorStop(0,'rgba(255,255,255,.4)');h.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=h;x.fillRect(0,0,120,120);
+ const P=[[60,24],[91.2,42],[91.2,78],[60,96],[28.8,78],[28.8,42]],C=['#22d3ee','#fde047','#4ade80','#f472b6','#fb923c','#a78bfa'];
+ x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=1.6;x.setLineDash([3,4]);x.beginPath();x.arc(60,60,36,0,Math.PI*2);x.stroke();x.setLineDash([]);
+ x.strokeStyle='rgba(255,255,255,.6)';x.lineWidth=2;x.lineCap='round';x.beginPath();P.forEach(q=>{x.moveTo(60,60);x.lineTo(q[0],q[1])});x.stroke();
+ x.strokeStyle='#fff';x.lineWidth=2.5;P.forEach((q,i)=>{x.beginPath();x.arc(q[0],q[1],7,0,Math.PI*2);x.fillStyle=C[i];x.fill();x.stroke()});
+ x.save();x.shadowColor='rgba(0,0,0,.25)';x.shadowBlur=6;x.fillStyle='#fff';x.beginPath();x.arc(60,60,20,0,Math.PI*2);x.fill();x.restore();
+ const sg=x.createLinearGradient(50,48,70,76);sg.addColorStop(0,'#4f46e5');sg.addColorStop(1,'#db2777');
+ x.fillStyle=sg;x.beginPath();x.moveTo(60,48.5);x.lineTo(70,52.3);x.lineTo(70,60.5);x.bezierCurveTo(70,67.5,65.6,71.7,60,74.5);x.bezierCurveTo(54.4,71.7,50,67.5,50,60.5);x.lineTo(50,52.3);x.closePath();x.fill();
+ x.strokeStyle='#fff';x.lineWidth=2.8;x.lineJoin='round';x.beginPath();x.moveTo(55,60.5);x.lineTo(59,64.5);x.lineTo(66,56);x.stroke();
  return c.toDataURL('image/png');
 }
 function setupIcons(){
@@ -325,7 +338,7 @@ function setupIcons(){
   $('#hlogo').src=i192;
   [['apple-touch-icon',i180],['icon',i192]].forEach(([r,h])=>{const l=document.createElement('link');l.rel=r;l.href=h;document.head.appendChild(l)});
   const m={name:'SBK Center Hub',short_name:'Center Hub',display:'standalone',background_color:'#4f46e5',theme_color:'#4f46e5',
-   start_url:location.href.split('#')[0],icons:[{src:i192,sizes:'192x192',type:'image/png'},{src:i512,sizes:'512x512',type:'image/png'}]};
+   start_url:location.href.split('#')[0],icons:[{src:i192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:i512,sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
   const l=document.createElement('link');l.rel='manifest';
   l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));document.head.appendChild(l);
  }catch(e){console.warn('สร้างไอคอนไม่สำเร็จ',e)}
