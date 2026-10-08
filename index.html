@@ -22,7 +22,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{font-family:'Prompt','Sarabun',sans-serif;line-height:1.7;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 button{font:inherit;cursor:pointer;border:0;color:inherit}
 
-/* ===== Splash / Screensaver (ใช้ร่วมกัน) ===== */
+/* ===== หน้าโลโก้เปิดแอป (Splash) ===== */
 .scr{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;color:#fff;
  background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777,#f97316,#06b6d4);background-size:400% 400%;animation:bg 12s ease infinite;transition:opacity .7s,visibility .7s;cursor:pointer;padding:24px}
 .scr.hide{opacity:0;visibility:hidden}
@@ -170,15 +170,6 @@ header img{animation:glow 3.2s ease-in-out infinite}
  <div class="hint">กำลังเข้าสู่ระบบ… แตะเพื่อเข้าทันที</div>
 </div>
 
-<!-- หน้าพักจอ (ไม่มีการใช้งาน) -->
-<div class="scr hide" id="saver">
- <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
- <svg class="logo"><use href="#logo"/></svg>
- <h1>SBK CENTER HUB</h1>
- <div class="dt"><div class="d" data-d></div><div class="t" data-t></div></div>
- <div class="hint">แตะหน้าจอหรือขยับเมาส์เพื่อกลับสู่การใช้งาน</div>
-</div>
-
 <!-- ตัวดูแอปในหน้า -->
 <div id="viewer">
  <div class="vb"><button class="ib" id="vback">← กลับ</button><b id="vtitle"></b>
@@ -202,12 +193,11 @@ header img{animation:glow 3.2s ease-in-out infinite}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty">🔎 ไม่พบแอปที่ค้นหา กรุณาลองคำค้นอื่น</div>
 </main>
-<footer>SBK Center Hub v8 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ</footer>
+<footer>SBK Center Hub v9 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ</footer>
 <div id="toast"></div>
 
 <script>
 /* ===== 1. ตั้งค่า ===== */
-const IDLE_MS = 4 * 60 * 1000;   // พักจอเมื่อไม่มีการใช้งาน 4 นาที (ปรับได้ 3–5 นาที)
 const SPLASH_MS = 3000;          // แสดงโลโก้ 3 วินาที (ปรับได้ 2–4 วินาที)
 const B = 'https://center124-glitch.github.io/';
 const APPS = [
@@ -225,7 +215,7 @@ const APPS = [
  {n:'สรุปยอดยานพาหนะ HLW',d:'รายงานสรุปยอดรถยนต์/ยานพาหนะ',i:'🚙',c:'a',u:'HLW-Car-Vehicle-Summary-Report/',g:'#f97316,#ef4444'}
 ];
 const CATS = [['all','ทั้งหมด'],['a','📊 วิเคราะห์ & รายงาน'],['s','🛡️ รปภ. & CCTV'],['p','🅿️ ลานจอด & ร้านค้า']];
-let lastKey='', cat='all', embed=false, idleT, viewing=null, lastReset=0;
+let lastKey='', cat='all', embed=false, viewing=null;
 const mq=matchMedia('(prefers-color-scheme: dark)');
 /* ===== โหมดมืด/สว่าง: จำค่าที่เลือกไว้ ถ้ายังไม่เคยเลือกจะตามค่าของเครื่อง ===== */
 function applyTheme(t){
@@ -286,24 +276,24 @@ function ripple(card,e){
 }
 /* ===== 3.2 พื้นหลังเครือข่าย Hub (โหนดสีลอย เชื่อมเส้น และเชื่อมหาเมาส์/นิ้ว) ===== */
 function initBg(){
- const cv=$('#bgc'),x=cv.getContext('2d'),sp=$('#splash'),sv=$('#saver'),vw=$('#viewer');
+ const cv=$('#bgc'),x=cv.getContext('2d'),sp=$('#splash'),vw=$('#viewer');
  const COL=['#22d3ee','#fde047','#4ade80','#f472b6','#fb923c','#a78bfa'];
  let W,H,D,N=[],mx=null,my=null;
  function size(){
   D=Math.min(devicePixelRatio||1,1.5);W=innerWidth;H=innerHeight;cv.width=W*D;cv.height=H*D;x.setTransform(D,0,0,D,0,0);
-  const n=Math.min(W<600?32:70,Math.round(W*H/20000));
+  const n=Math.min(W<600?32:70,Math.round(W*H/15000));
   while(N.length<n)N.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:1.8+Math.random()*2.6,c:COL[N.length%6]});
   N.length=n;N.forEach(p=>{p.x=Math.min(p.x,W);p.y=Math.min(p.y,H)});
  }
  function draw(move){
-  const dark=document.documentElement.dataset.theme==='dark',L=dark?'167,139,250':'79,70,229',K=dark?.38:.3;
+  const dark=document.documentElement.dataset.theme==='dark',L=dark?'167,139,250':'79,70,229',K=dark?.55:.42;
   x.clearRect(0,0,W,H);
   if(move)N.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1});
   x.lineWidth=1;
   for(let i=0;i<N.length;i++){
    const a=N[i];
    for(let j=i+1;j<N.length;j++){const b=N[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
-    if(d<130){x.strokeStyle=`rgba(${L},${((1-d/130)*K).toFixed(3)})`;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+    if(d<150){x.strokeStyle=`rgba(${L},${((1-d/150)*K).toFixed(3)})`;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
    if(mx!==null){const dx=a.x-mx,dy=a.y-my,d=Math.sqrt(dx*dx+dy*dy);
     if(d<170){x.strokeStyle=`rgba(${L},${((1-d/170)*.6).toFixed(3)})`;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(mx,my);x.stroke()}}
   }
@@ -315,7 +305,7 @@ function initBg(){
  function frame(){
   requestAnimationFrame(frame);
   /* หยุดวาดเมื่อซ่อนแท็บ หรือมีหน้าอื่นบังอยู่ เพื่อประหยัดแบตเตอรี่ */
-  if(document.hidden||!sp.classList.contains('hide')||!sv.classList.contains('hide')||vw.classList.contains('on'))return;
+  if(document.hidden||!sp.classList.contains('hide')||vw.classList.contains('on'))return;
   draw(true);
  }
  let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{size();if(reduce)draw(false)},150)});
@@ -337,29 +327,18 @@ function openApp(u){
  if(!embed){ openTab(url); return; }
  viewing=url; $('#vtitle').textContent=a.i+' '+a.n; $('#frame').src=url; $('#viewer').classList.add('on');
 }
-function closeViewer(){$('#viewer').classList.remove('on');$('#frame').src='about:blank';viewing=null;resetIdle(true)}
+function closeViewer(){$('#viewer').classList.remove('on');$('#frame').src='about:blank';viewing=null}
 
-/* ===== 5. Splash เข้าอัตโนมัติ + พักจอเมื่อไม่ใช้งาน ===== */
+/* ===== 5. Splash เข้าอัตโนมัติ ===== */
 function enter(){
- $('#splash').classList.add('hide'); resetIdle(true);
+ $('#splash').classList.add('hide');
 }
 function startSplash(){
  const s=performance.now(), pg=$('#pg');
  (function f(){const p=Math.min((performance.now()-s)/SPLASH_MS,1);pg.style.width=p*100+'%';
   if(p<1&&!$('#splash').classList.contains('hide'))requestAnimationFrame(f);else enter()})();
 }
-function resetIdle(force){
- const n=Date.now(); if(!force&&n-lastReset<1000)return; lastReset=n; /* ลดภาระจาก pointermove/scroll */
- clearTimeout(idleT);
- if(!viewing) idleT=setTimeout(()=>$('#saver').classList.remove('hide'),IDLE_MS);
-}
-['pointerdown','pointermove','keydown','scroll','wheel','touchstart'].forEach(e=>
- addEventListener(e,()=>{ if(!$('#saver').classList.contains('hide'))return; resetIdle() },{passive:true}));
-function wake(){$('#saver').classList.add('hide');resetIdle(true)}
-$('#saver').addEventListener('pointerdown',wake);
-$('#saver').addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&(Math.abs(e.movementX)+Math.abs(e.movementY)>4))wake()});
-addEventListener('keydown',()=>{if(!$('#saver').classList.contains('hide'))wake();else if(!$('#splash').classList.contains('hide'))enter()});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&$('#splash').classList.contains('hide'))wake()});
+addEventListener('keydown',()=>{if(!$('#splash').classList.contains('hide'))enter()});
 $('#splash').addEventListener('pointerdown',enter);
 
 /* ===== 6. ไอคอนแอปบนหน้าจอมือถือ/คอม (สร้างอัตโนมัติ) ===== */
