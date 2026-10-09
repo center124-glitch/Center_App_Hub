@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- SBK Center Hub v12 — v12: ออกแบบโลโก้ใหม่ "C-Lens" (ตัว C โอบเลนส์ CCTV + เรดาร์ + จุด LIVE) โทนส้ม-กุหลาบ
+<!-- SBK Center Hub v13 — v13: ไอคอนติดตั้งแยก 2 ชุด มุมโค้งโปร่งใสสำหรับ PC และเต็มกรอบสำหรับ iOS/Android
+     v12 — v12: ออกแบบโลโก้ใหม่ "C-Lens" (ตัว C โอบเลนส์ CCTV + เรดาร์ + จุด LIVE) โทนส้ม-กุหลาบ
      v11: ไอคอนติดตั้งวาดจากโลโก้เดียวกัน
      v10 — ตรวจทาน Logic/Edge case + Error Handling + Responsive (มือถือ/แท็บเล็ต/โน้ตบุ๊ก/เดสก์ท็อป, iOS/Android)
      v10: ป้องกันหน้าว่างบน Safari รุ่นเก่า (matchMedia listener), โหมด "เปิดในแอป" รองรับปุ่ม Back ของมือถือ + หน้าโหลด/ช้า/ล้มเหลว/ลองใหม่,
@@ -260,7 +261,7 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty" hidden>🔎 ไม่พบแอปที่ค้นหา กรุณาลองคำค้นอื่น<br><button id="resetF">ล้างการค้นหา</button></div>
 </main>
-<footer>SBK Center Hub v12 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: / ค้นหา · Enter เปิดผลลัพธ์แรก · Esc กลับ</span></footer>
+<footer>SBK Center Hub v13 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: / ค้นหา · Enter เปิดผลลัพธ์แรก · Esc กลับ</span></footer>
 <div id="net" role="status">📡 ออฟไลน์ — กรุณาตรวจสอบอินเทอร์เน็ต</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -505,23 +506,26 @@ function logoSvg(symId,forIcon){
  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><defs>${grads}</defs>${body}</svg>`;
 }
 function makeIcons(cfg){
+ /* ไอคอน 2 ชุด เพราะแต่ละระบบปฏิบัติการตัดมุมไม่เหมือนกัน:
+    - "any" (มุมโค้ง พื้นมุมโปร่งใส) → Windows / macOS / ChromeOS / แท็บเบราว์เซอร์ ซึ่งแสดงไอคอนตามไฟล์จริง ไม่ตัดมุมให้
+    - "maskable" + apple-touch-icon (เต็มกรอบสี่เหลี่ยม) → Android / iOS ซึ่งตัดมุมเอง (ถ้าใส่แบบมุมโค้ง iOS จะเติมมุมสีดำ)
+    v8 ใช้แบบเต็มกรอบอย่างเดียว ไอคอนบนเดสก์ท็อป PC จึงเป็นสี่เหลี่ยมไม่ตัดมุม */
  try{
-  $('#fav').href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(logoSvg(cfg.sym,false)); // แท็บเบราว์เซอร์: แบบมุมโค้ง
-  const img=new Image();
-  img.onload=()=>{
-   try{
-    const mk=n=>{const c=document.createElement('canvas');c.width=c.height=n;c.getContext('2d').drawImage(img,0,0,n,n);return c.toDataURL('image/png')};
-    const i180=mk(180),i192=mk(192),i512=mk(512);
-    $('#touch').href=i180;
-    const start=location.href.split('#')[0];
-    const m={name:cfg.name,short_name:cfg.short,description:cfg.desc,display:'standalone',orientation:'any',background_color:cfg.bg,theme_color:cfg.theme,lang:'th',
-     start_url:start,scope:new URL('./',start).href,
-     icons:[{src:i192,sizes:'192x192',type:'image/png',purpose:'any'},{src:i512,sizes:'512x512',type:'image/png',purpose:'any'},{src:i512,sizes:'512x512',type:'image/png',purpose:'maskable'}]};
-    const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));document.head.appendChild(l);
-   }catch(e){console.warn('สร้างไอคอนไม่สำเร็จ (ไม่กระทบการใช้งาน)',e)}
-  };
-  img.onerror=()=>console.warn('โหลดโลโก้สำหรับไอคอนไม่สำเร็จ (ไม่กระทบการใช้งาน)');
-  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(logoSvg(cfg.sym,true));
+  const rounded=logoSvg(cfg.sym,false),full=logoSvg(cfg.sym,true);
+  $('#fav').href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(rounded);
+  const load=svg=>new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
+  // pad = ระยะขอบโปร่งใสรอบไอคอนมุมโค้ง ให้ขนาดดูเท่าไอคอนโปรแกรมอื่นบนเดสก์ท็อป และเส้นขอบไม่ชิดขอบภาพ
+  const mk=(img,n,pad=0)=>{const c=document.createElement('canvas');c.width=c.height=n;const p=Math.round(n*pad);c.getContext('2d').drawImage(img,p,p,n-2*p,n-2*p);return c.toDataURL('image/png')};
+  Promise.all([load(rounded),load(full)]).then(([r,fu])=>{
+   const any192=mk(r,192,.04),any512=mk(r,512,.04),mask512=mk(fu,512),touch180=mk(fu,180);
+   $('#touch').href=touch180;
+   const png=document.createElement('link');png.rel='icon';png.type='image/png';png.sizes='192x192';png.href=any192;document.head.appendChild(png); // สำรองให้เบราว์เซอร์ที่ไม่รองรับ favicon แบบ SVG
+   const start=location.href.split('#')[0];
+   const m={name:cfg.name,short_name:cfg.short,description:cfg.desc,display:'standalone',orientation:'any',background_color:cfg.bg,theme_color:cfg.theme,lang:'th',
+    start_url:start,scope:new URL('./',start).href,
+    icons:[{src:any192,sizes:'192x192',type:'image/png',purpose:'any'},{src:any512,sizes:'512x512',type:'image/png',purpose:'any'},{src:mask512,sizes:'512x512',type:'image/png',purpose:'maskable'}]};
+   const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));document.head.appendChild(l);
+  }).catch(e=>console.warn('สร้างไอคอนไม่สำเร็จ (ไม่กระทบการใช้งาน)',e));
  }catch(e){console.warn('สร้างไอคอนไม่สำเร็จ (ไม่กระทบการใช้งาน)',e)}
 }
 function setupIcons(){makeIcons({sym:'logo',name:'SBK Center Hub',short:'Center Hub',desc:'รวมแอปห้อง Center · Seacon Bangkae',bg:'#4f46e5',theme:'#4f46e5'})}
