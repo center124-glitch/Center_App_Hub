@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- SBK Center Hub v15 — v15: แก้แถบแจ้ง "ออฟไลน์" แสดงผิดขณะเปิดแอปทั้งที่ออนไลน์อยู่
+<!-- SBK Center Hub v16 — v16: ย้ายคำทักทาย + สถิติ (แอปทั้งหมด/หมวดงาน) ขึ้นไปอยู่ในส่วนหัว แทนแบนเนอร์แยก
+     v15 — v15: แก้แถบแจ้ง "ออฟไลน์" แสดงผิดขณะเปิดแอปทั้งที่ออนไลน์อยู่
      v14 — v14: เพิ่มแอป "Service Audit Dashboard" (Security_Service_Audit_Dashboard) หมวด รปภ. & CCTV
      v13 — v13: ไอคอนติดตั้งแยก 2 ชุด มุมโค้งโปร่งใสสำหรับ PC และเต็มกรอบสำหรับ iOS/Android
      v12 — v12: ออกแบบโลโก้ใหม่ "C-Lens" (ตัว C โอบเลนส์ CCTV + เรดาร์ + จุด LIVE) โทนส้ม-กุหลาบ
@@ -72,7 +73,7 @@ header{position:sticky;top:0;z-index:20;padding:calc(12px + env(safe-area-inset-
 @keyframes drop{from{transform:translateY(-100%);opacity:0}}
 .hlogo{width:44px;height:44px;border-radius:12px;flex:none;animation:glow 3.2s ease-in-out infinite}
 @keyframes glow{50%{box-shadow:0 0 0 7px rgba(255,255,255,.22),0 0 22px rgba(253,224,71,.7)}}
-.ht{flex:1;min-width:0}.ht b{font-size:18px;display:block;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ht small{opacity:.9;font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ht{flex:none;min-width:0}.ht b{font-size:18px;display:block;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ht small{opacity:.9;font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .clk{text-align:right;font-size:12px;line-height:1.4;flex:none}.clk b{font-size:20px;font-variant-numeric:tabular-nums;display:block}
 .ib{background:rgba(255,255,255,.2);border-radius:12px;padding:6px 12px;min-height:40px;min-width:40px;font-size:13px;color:#fff;transition:transform .2s,background .2s;flex:none;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:4px;text-decoration:none}
 @media(hover:hover){.ib:hover{background:rgba(255,255,255,.34)}}
@@ -82,17 +83,26 @@ header{position:sticky;top:0;z-index:20;padding:calc(12px + env(safe-area-inset-
 
 /* ===== หน้าหลัก ===== */
 main{max-width:1480px;margin:0 auto;padding:18px;position:relative}
-.hero{margin-bottom:12px;border-radius:24px;padding:18px 22px;color:#fff;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;position:relative;overflow:hidden;
- background:linear-gradient(120deg,#06b6d4,#4f46e5,#db2777,#f97316);background-size:300% 300%;animation:bg 10s ease infinite,in .6s both;box-shadow:0 12px 28px rgba(79,70,229,.3)}
-.hero::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);animation:shine 5s ease-in-out infinite;pointer-events:none}
+/* ===== v16: คำทักทาย + สถิติ ย้ายขึ้นไปอยู่ในส่วนหัว (เดิมเป็นแบนเนอร์แยกใต้หัวเว็บ) ===== */
+.hinfo{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:0 6px;transition:max-height .35s ease,opacity .25s ease,margin .35s ease}
+.hgreet{position:relative;overflow:hidden;margin:0 auto;min-width:0;padding:6px 18px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);line-height:1.35}
+.hgreet::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.3),transparent);transform:skewX(-20deg);animation:shine 6s ease-in-out infinite;pointer-events:none}
 @keyframes shine{60%,100%{left:140%}}
-.hi{font-size:clamp(18px,4.6vw,24px);font-weight:700;position:relative}
+.hi{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wave{display:inline-block;transform-origin:70% 70%;animation:wave 2.2s ease-in-out infinite}
 @keyframes wave{0%,60%,100%{transform:rotate(0)}10%,30%{transform:rotate(16deg)}20%,40%{transform:rotate(-10deg)}50%{transform:rotate(8deg)}}
-.hs{font-size:13px;opacity:.92;position:relative}
-.chips{display:flex;gap:10px;position:relative;z-index:1}
-.chip{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:16px;padding:6px 16px;text-align:center;line-height:1.3;min-width:84px}
-.chip b{font-size:24px;display:block;font-variant-numeric:tabular-nums}.chip span{font-size:12px}
+.hs{font-size:12px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chips{display:flex;gap:8px;flex:none}
+.chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:14px;padding:4px 14px;text-align:center;line-height:1.2;min-width:76px}
+.chip b{font-size:20px;display:block;font-variant-numeric:tabular-nums}.chip span{font-size:11px;opacity:.92;white-space:nowrap}
+/* จอเล็กกว่า 1100px: ข้อมูลลงไปเป็นแถวที่ 2 ของหัวเว็บ และพับเก็บอัตโนมัติเมื่อเลื่อนลง เพื่อไม่ให้หัวเว็บกินพื้นที่การ์ด */
+@media(max-width:1099px){
+ header{flex-wrap:wrap;row-gap:0}
+ .ht{flex:1}
+ .hinfo{order:10;flex-basis:100%;padding:0;margin-top:10px;max-height:90px;justify-content:space-between}
+ .hgreet{margin:0;flex:1}
+ header.sm .hinfo{max-height:0;margin-top:0;opacity:0;overflow:hidden;pointer-events:none}
+}
 .sbw{position:relative}
 .sb{width:100%;padding:13px 48px 13px 18px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:16px;outline:0;box-shadow:0 4px 14px rgba(0,0,0,.05);transition:border-color .3s,background-color .45s}
 .sb::-webkit-search-cancel-button{display:none}
@@ -183,7 +193,7 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  .clk span{display:none}.clk b{font-size:16px}
  #mode .lbl,#vopen .lbl,#vback .lbl{display:none}
  main{padding:14px 12px}
- .hero{padding:16px;border-radius:20px}.chips{width:100%}.chip{flex:1}
+ .hgreet{padding:6px 12px}.hi{font-size:15px}.hs{display:none}.chip{min-width:0;padding:4px 10px}.chip b{font-size:17px}.chip span{font-size:10.5px}
  .grid{gap:12px}
  /* มือถือ: การ์ดแนวนอน ไอคอนซ้าย-ข้อความขวา ประหยัดพื้นที่ */
  .card{min-height:0;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"ic h" "ic p" "ic go";column-gap:14px;row-gap:2px;padding:16px;border-radius:20px}
@@ -250,21 +260,23 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
 <header>
  <svg class="hlogo" viewBox="0 0 120 120" aria-hidden="true"><use href="#logo"/></svg>
  <div class="ht"><b>SBK Center Hub</b><small>รวมแอปห้อง Center · Seacon Bangkae</small></div>
+ <div class="hinfo">
+  <div class="hgreet"><div class="hi"><span id="hi"></span> <span class="wave">👋</span></div><div class="hs">เลือกระบบที่ต้องการใช้งานได้เลย</div></div>
+  <div class="chips"><div class="chip"><b id="nApps">0</b><span>แอปทั้งหมด</span></div><div class="chip"><b id="nCats">0</b><span>หมวดงาน</span></div></div>
+ </div>
  <button class="ib" id="theme" aria-label="สลับโหมดมืด/สว่าง">🌙</button>
  <button class="ib" id="mode" aria-label="สลับวิธีเปิดแอป"></button>
  <div class="clk"><span data-d></span><b data-t></b></div>
 </header>
 
 <main>
- <section class="hero"><div><div class="hi"><span id="hi"></span> <span class="wave">👋</span></div><div class="hs">เลือกระบบที่ต้องการใช้งานได้เลย</div></div>
-  <div class="chips"><div class="chip"><b id="nApps">0</b><span>แอปทั้งหมด</span></div><div class="chip"><b id="nCats">0</b><span>หมวดงาน</span></div></div></section>
  <div class="sbw"><input class="sb" id="q" type="search" placeholder="🔍 ค้นหาแอป เช่น CCTV, รถยนต์, ตารางเวร" autocomplete="off" enterkeyhint="search" aria-label="ค้นหาแอป"><button class="clr" id="qClr" hidden aria-label="ล้างคำค้น">✕</button></div>
  <div class="rec" id="rec"></div>
  <div class="tabs" id="tabs" role="tablist" aria-label="หมวดงาน"></div>
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty" hidden>🔎 ไม่พบแอปที่ค้นหา กรุณาลองคำค้นอื่น<br><button id="resetF">ล้างการค้นหา</button></div>
 </main>
-<footer>SBK Center Hub v15 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: / ค้นหา · Enter เปิดผลลัพธ์แรก · Esc กลับ</span></footer>
+<footer>SBK Center Hub v16 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: / ค้นหา · Enter เปิดผลลัพธ์แรก · Esc กลับ</span></footer>
 <div id="net" role="status">📡 ออฟไลน์ — กรุณาตรวจสอบอินเทอร์เน็ต</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -564,6 +576,9 @@ function handleEvents(){
  addEventListener('online',()=>{$('#net').classList.remove('show');toast('เชื่อมต่ออินเทอร์เน็ตแล้ว','ok');if(viewing&&loadState==='error')reloadFrame()});
  addEventListener('offline',()=>{$('#net').classList.add('show');toast('ขาดการเชื่อมต่ออินเทอร์เน็ต','err')});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden){startClock();greet()}});
+ const hd=$('header');let hdT=false;
+ addEventListener('scroll',()=>{if(hdT)return;hdT=true;requestAnimationFrame(()=>{hdT=false;const y=scrollY;
+  if(y>80&&!hd.classList.contains('sm'))hd.classList.add('sm');else if(y<10&&hd.classList.contains('sm'))hd.classList.remove('sm')})},{passive:true});
 }
 
 /* ===== 10. เริ่มต้น ===== */
