@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- SBK Center Hub v16 — v16: ย้ายคำทักทาย + สถิติ (แอปทั้งหมด/หมวดงาน) ขึ้นไปอยู่ในส่วนหัว แทนแบนเนอร์แยก
+<!-- SBK Center Hub v17 — v17: เพิ่มแอป "SBK Break Dashboard" (SBK-Break-Dashboard) หมวด รปภ. & CCTV
+     v16 — v16: ย้ายคำทักทาย + สถิติ (แอปทั้งหมด/หมวดงาน) ขึ้นไปอยู่ในส่วนหัว แทนแบนเนอร์แยก
      v15 — v15: แก้แถบแจ้ง "ออฟไลน์" แสดงผิดขณะเปิดแอปทั้งที่ออนไลน์อยู่
      v14 — v14: เพิ่มแอป "Service Audit Dashboard" (Security_Service_Audit_Dashboard) หมวด รปภ. & CCTV
      v13 — v13: ไอคอนติดตั้งแยก 2 ชุด มุมโค้งโปร่งใสสำหรับ PC และเต็มกรอบสำหรับ iOS/Android
@@ -276,7 +277,7 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty" hidden>🔎 ไม่พบแอปที่ค้นหา กรุณาลองคำค้นอื่น<br><button id="resetF">ล้างการค้นหา</button></div>
 </main>
-<footer>SBK Center Hub v16 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: / ค้นหา · Enter เปิดผลลัพธ์แรก · Esc กลับ</span></footer>
+<footer>SBK Center Hub v17 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: / ค้นหา · Enter เปิดผลลัพธ์แรก · Esc กลับ</span></footer>
 <div id="net" role="status">📡 ออฟไลน์ — กรุณาตรวจสอบอินเทอร์เน็ต</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -304,6 +305,7 @@ const APPS=[
  {n:'ฐานข้อมูล CCTV (V42)',d:'ทะเบียนและตำแหน่งกล้องวงจรปิด',i:'📹',c:'s',u:'CCTV-Database-V42/',g:['#0ea5e9','#4f46e5']},
  {n:'CCTV OPS',d:'งานปฏิบัติการกล้องวงจรปิด',i:'🎥',c:'s',u:'-CCTV_OPS/',g:['#db2777','#f97316']},
  {n:'Service Audit Dashboard',d:'วิเคราะห์ผลตรวจประเมินสมรรถนะการบริการ บุคลิกภาพ และการสื่อสารของเจ้าหน้าที่',i:'🤝',c:'s',u:'Security_Service_Audit_Dashboard/',g:['#0d9488','#6366f1']},
+ {n:'SBK Break Dashboard',d:'สรุปการพักของเจ้าหน้าที่ รปภ. แบบเรียลไทม์ แจ้งเตือนกลับเกินเวลา พร้อมรายงานรายวัน/สัปดาห์/เดือน',i:'☕',c:'s',u:'SBK-Break-Dashboard/',g:['#ea580c','#f59e0b']},
  {n:'Dashboard รถยนต์พนักงานร้านค้า',d:'สรุปยอดและตรวจสอบข้อมูลรถยนต์พนักงานร้านค้า',i:'🏪',c:'p',u:'SBK-Shop-Vehicle-Dashboard/',g:['#0891b2','#2563eb'],lock:1},
  {n:'Dashboard รถยนต์พนักงาน',d:'สรุปและตรวจสอบข้อมูลรถยนต์พนักงาน แยกตามแผนก',i:'🪪',c:'p',u:'SBK-Staff-Vehicle-Dashboard/',g:['#9333ea','#ec4899'],lock:1},
  {n:'Car Database Pro',d:'ฐานข้อมูลรถยนต์ในลานจอด',i:'🚗',c:'p',u:'Car_Dadabase_Pro/',g:['#16a34a','#84cc16']},
