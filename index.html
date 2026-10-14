@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- SBK Center Hub v18 — v18: เพิ่มแอป "SBK Fines" (Security_Fines_A-B-C) หมวด รปภ. & CCTV + ลดขนาดการ์ดทุกการแสดงผลลง 10%
+<!-- SBK Center Hub v19 — v19: ลบช่องค้นหาออก เพื่อให้เห็นการ์ดแอปเต็มหน้าจอมากขึ้น
+     v18 — v18: เพิ่มแอป "SBK Fines" (Security_Fines_A-B-C) หมวด รปภ. & CCTV + ลดขนาดการ์ดทุกการแสดงผลลง 10%
      v17 — v17: เพิ่มแอป "SBK Break Dashboard" (SBK-Break-Dashboard) หมวด รปภ. & CCTV
      v16 — v16: ย้ายคำทักทาย + สถิติ (แอปทั้งหมด/หมวดงาน) ขึ้นไปอยู่ในส่วนหัว แทนแบนเนอร์แยก
      v15 — v15: แก้แถบแจ้ง "ออฟไลน์" แสดงผิดขณะเปิดแอปทั้งที่ออนไลน์อยู่
@@ -105,11 +106,6 @@ main{max-width:1480px;margin:0 auto;padding:18px;position:relative}
  .hgreet{margin:0;flex:1}
  header.sm .hinfo{max-height:0;margin-top:0;opacity:0;overflow:hidden;pointer-events:none}
 }
-.sbw{position:relative}
-.sb{width:100%;padding:13px 48px 13px 18px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:16px;outline:0;box-shadow:0 4px 14px rgba(0,0,0,.05);transition:border-color .3s,background-color .45s}
-.sb::-webkit-search-cancel-button{display:none}
-.sb:focus{border-color:#7c3aed;box-shadow:0 0 0 4px rgba(124,58,237,.15)}
-.clr{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:var(--line);color:var(--text);font-size:13px}
 .rec{display:flex;gap:8px;overflow-x:auto;padding:12px 2px 0;scrollbar-width:none;align-items:center}
 .rec::-webkit-scrollbar{display:none}
 .rec .rl{font-size:13px;color:var(--muted);white-space:nowrap}
@@ -272,13 +268,12 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
 </header>
 
 <main>
- <div class="sbw"><input class="sb" id="q" type="search" placeholder="🔍 ค้นหาแอป เช่น CCTV, รถยนต์, ตารางเวร" autocomplete="off" enterkeyhint="search" aria-label="ค้นหาแอป"><button class="clr" id="qClr" hidden aria-label="ล้างคำค้น">✕</button></div>
  <div class="rec" id="rec"></div>
  <div class="tabs" id="tabs" role="tablist" aria-label="หมวดงาน"></div>
  <div class="grid" id="grid"></div>
- <div class="empty" id="empty" hidden>🔎 ไม่พบแอปที่ค้นหา กรุณาลองคำค้นอื่น<br><button id="resetF">ล้างการค้นหา</button></div>
+ <div class="empty" id="empty" hidden>🔎 ไม่พบแอปในหมวดนี้<br><button id="resetF">แสดงทั้งหมด</button></div>
 </main>
-<footer>SBK Center Hub v18 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: / ค้นหา · Enter เปิดผลลัพธ์แรก · Esc กลับ</span></footer>
+<footer>SBK Center Hub v19 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
 <div id="net" role="status">📡 ออฟไลน์ — กรุณาตรวจสอบอินเทอร์เน็ต</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -367,10 +362,7 @@ function toggleTheme(){
 
 /* ===== 4. แสดงการ์ดแอป ===== */
 function render(){
- const k=$('#q').value.trim().toLowerCase();
- $('#qClr').hidden=!k;
- const catName=c=>(CATS.find(x=>x[0]===c)||['',''])[1];
- const list=APPS.filter(a=>(cat==='all'||a.c===cat)&&(a.n+' '+a.d+' '+catName(a.c)).toLowerCase().includes(k));
+ const list=APPS.filter(a=>cat==='all'||a.c===cat);
  const key=cat+'|'+list.map(a=>a.u).join(),an=key!==lastKey;lastKey=key; // เล่นอนิเมชันเฉพาะตอนผลลัพธ์เปลี่ยน
  $('#grid').innerHTML=list.map((a,x)=>`<button type="button" class="card ${an?'anim':''}" style="background:linear-gradient(135deg,${a.g[0]},${a.g[1]});animation-delay:${x*60}ms" data-u="${esc(a.u)}" aria-label="เปิด ${esc(a.n)}">
   ${a.lock?'<span class="lock" title="ต้องใช้รหัสผ่านเจ้าหน้าที่">🔒 รหัสผ่าน</span>':''}
@@ -389,7 +381,7 @@ function remember(u){
  if(!Array.isArray(r))r=[];
  ls.set('hubRecent',JSON.stringify([u,...r.filter(x=>x!==u)].slice(0,6)));renderRecent();
 }
-function clearSearch(){$('#q').value='';cat='all';render();$('#q').focus()}
+function showAll(){cat='all';render()}
 
 /* ===== 5. เอฟเฟกต์เสริม ===== */
 function greet(){ /* ทักทายตามเวลาไทยจริง */
@@ -560,9 +552,7 @@ function handleEvents(){
   const r=c.getBoundingClientRect();c.style.setProperty('--ry',((e.clientX-r.left)/r.width-.5)*10+'deg');c.style.setProperty('--rx',(-((e.clientY-r.top)/r.height-.5))*10+'deg')});
  $('#grid').addEventListener('pointerout',e=>{const c=e.target.closest('.card');if(c&&!c.contains(e.relatedTarget)){c.style.removeProperty('--rx');c.style.removeProperty('--ry')}});
  $('#tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(t){cat=t.dataset.c;render()}});
- $('#q').addEventListener('input',render);
- $('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){const f=$('#grid .card');if(f){e.preventDefault();openApp(f.dataset.u)}}});
- $('#qClr').addEventListener('click',clearSearch);$('#resetF').addEventListener('click',clearSearch);
+ $('#resetF').addEventListener('click',showAll);
  $('#mode').addEventListener('click',()=>{embed=!embed;modeLabel();
   if(!ls.set('hubEmbed',embed?'1':'0'))toast('เปลี่ยนแล้ว แต่บันทึกค่าไว้ในเครื่องไม่ได้ (จะกลับค่าเดิมเมื่อเปิดใหม่)','err');
   else toast(embed?'จะเปิดแอปภายในหน้านี้':'จะเปิดแอปในแท็บใหม่','ok')});
@@ -572,10 +562,7 @@ function handleEvents(){
  $('#splash').addEventListener('click',enter);
  addEventListener('keydown',e=>{
   if(!entered){if(!['Shift','Control','Alt','Meta'].includes(e.key))enter();return}
-  if(e.key==='Escape'){if(viewing)closeViewer();else if($('#q').value)clearSearch();return}
-  if(e.ctrlKey||e.metaKey||e.altKey||viewing)return;
-  const tag=(document.activeElement&&document.activeElement.tagName)||'';
-  if(e.key==='/'&&!/INPUT|TEXTAREA/.test(tag)){e.preventDefault();$('#q').focus()}
+  if(e.key==='Escape'&&viewing)closeViewer();
  });
  addEventListener('online',()=>{$('#net').classList.remove('show');toast('เชื่อมต่ออินเทอร์เน็ตแล้ว','ok');if(viewing&&loadState==='error')reloadFrame()});
  addEventListener('offline',()=>{$('#net').classList.add('show');toast('ขาดการเชื่อมต่ออินเทอร์เน็ต','err')});
