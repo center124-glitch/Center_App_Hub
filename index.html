@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- SBK Center Hub v19 — v19: ลบช่องค้นหาออก เพื่อให้เห็นการ์ดแอปเต็มหน้าจอมากขึ้น
+<!-- SBK Center Hub v20 — v20: แก้คำเตือน "สร้างไอคอนไม่สำเร็จ ... Invalid URL" (ข้ามการสร้าง manifest เมื่อไม่ได้เปิดผ่าน http/https)
+     v19 — v19: ลบช่องค้นหาออก เพื่อให้เห็นการ์ดแอปเต็มหน้าจอมากขึ้น
      v18 — v18: เพิ่มแอป "SBK Fines" (Security_Fines_A-B-C) หมวด รปภ. & CCTV + ลดขนาดการ์ดทุกการแสดงผลลง 10%
      v17 — v17: เพิ่มแอป "SBK Break Dashboard" (SBK-Break-Dashboard) หมวด รปภ. & CCTV
      v16 — v16: ย้ายคำทักทาย + สถิติ (แอปทั้งหมด/หมวดงาน) ขึ้นไปอยู่ในส่วนหัว แทนแบนเนอร์แยก
@@ -273,7 +274,7 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty" hidden>🔎 ไม่พบแอปในหมวดนี้<br><button id="resetF">แสดงทั้งหมด</button></div>
 </main>
-<footer>SBK Center Hub v19 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
+<footer>SBK Center Hub v20 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
 <div id="net" role="status">📡 ออฟไลน์ — กรุณาตรวจสอบอินเทอร์เน็ต</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -532,9 +533,13 @@ function makeIcons(cfg){
    const any192=mk(r,192,.04),any512=mk(r,512,.04),mask512=mk(fu,512),touch180=mk(fu,180);
    $('#touch').href=touch180;
    const png=document.createElement('link');png.rel='icon';png.type='image/png';png.sizes='192x192';png.href=any192;document.head.appendChild(png); // สำรองให้เบราว์เซอร์ที่ไม่รองรับ favicon แบบ SVG
-   const start=location.href.split('#')[0];
+   /* manifest ต้องใช้ URL แบบ http(s) เท่านั้น — ถ้าเปิดจากกรอบพรีวิว (about:srcdoc / blob:) หรือไฟล์ในเครื่อง
+      new URL() จะ error "Invalid URL" และติดตั้งแอปไม่ได้อยู่แล้ว จึงข้ามการสร้าง manifest (ไอคอนแท็บ/iOS ที่ตั้งไว้ข้างบนยังใช้ได้) */
+   let start='',scope='';
+   try{const u=new URL(location.href);if(u.protocol==='https:'||u.protocol==='http:'){u.hash='';start=u.href;scope=new URL('./',u).href}}catch(e){}
+   if(!start)return;
    const m={name:cfg.name,short_name:cfg.short,description:cfg.desc,display:'standalone',orientation:'any',background_color:cfg.bg,theme_color:cfg.theme,lang:'th',
-    start_url:start,scope:new URL('./',start).href,
+    start_url:start,scope:scope,
     icons:[{src:any192,sizes:'192x192',type:'image/png',purpose:'any'},{src:any512,sizes:'512x512',type:'image/png',purpose:'any'},{src:mask512,sizes:'512x512',type:'image/png',purpose:'maskable'}]};
    const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));document.head.appendChild(l);
   }).catch(e=>console.warn('สร้างไอคอนไม่สำเร็จ (ไม่กระทบการใช้งาน)',e));
