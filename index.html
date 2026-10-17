@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- SBK Center Hub v20 — v20: แก้คำเตือน "สร้างไอคอนไม่สำเร็จ ... Invalid URL" (ข้ามการสร้าง manifest เมื่อไม่ได้เปิดผ่าน http/https)
+<!-- SBK Center Hub v21 — v21: เพิ่มแอป "SBK บันทึกเหตุการณ์ประจำวัน" (SBK-Daily-Log) หมวด รปภ. & CCTV
+     v20 — v20: แก้คำเตือน "สร้างไอคอนไม่สำเร็จ ... Invalid URL" (ข้ามการสร้าง manifest เมื่อไม่ได้เปิดผ่าน http/https)
      v19 — v19: ลบช่องค้นหาออก เพื่อให้เห็นการ์ดแอปเต็มหน้าจอมากขึ้น
      v18 — v18: เพิ่มแอป "SBK Fines" (Security_Fines_A-B-C) หมวด รปภ. & CCTV + ลดขนาดการ์ดทุกการแสดงผลลง 10%
      v17 — v17: เพิ่มแอป "SBK Break Dashboard" (SBK-Break-Dashboard) หมวด รปภ. & CCTV
@@ -274,7 +275,7 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty" hidden>🔎 ไม่พบแอปในหมวดนี้<br><button id="resetF">แสดงทั้งหมด</button></div>
 </main>
-<footer>SBK Center Hub v20 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
+<footer>SBK Center Hub v21 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
 <div id="net" role="status">📡 ออฟไลน์ — กรุณาตรวจสอบอินเทอร์เน็ต</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -304,6 +305,7 @@ const APPS=[
  {n:'Service Audit Dashboard',d:'วิเคราะห์ผลตรวจประเมินสมรรถนะการบริการ บุคลิกภาพ และการสื่อสารของเจ้าหน้าที่',i:'🤝',c:'s',u:'Security_Service_Audit_Dashboard/',g:['#0d9488','#6366f1']},
  {n:'SBK Break Dashboard',d:'สรุปการพักของเจ้าหน้าที่ รปภ. แบบเรียลไทม์ แจ้งเตือนกลับเกินเวลา พร้อมรายงานรายวัน/สัปดาห์/เดือน',i:'☕',c:'s',u:'SBK-Break-Dashboard/',g:['#ea580c','#f59e0b']},
  {n:'SBK Fines สรุปยอดปรับ',d:'บันทึกและสรุปยอดปรับ/ชดใช้ค่าเสียหาย หมวด A-B-C แผนก รปภ. พร้อมรายงาน PDF/Excel',i:'💸',c:'s',u:'Security_Fines_A-B-C/',g:['#e11d48','#7c3aed']},
+ {n:'SBK บันทึกเหตุการณ์ประจำวัน',d:'Daily Log บันทึกเหตุการณ์รายวัน ซิงก์ Google Sheets พร้อมรายงานสรุป A4 (PDF/JPEG)',i:'📒',c:'s',u:'SBK-Daily-Log/',g:['#16a34a','#0ea5e9']},
  {n:'Dashboard รถยนต์พนักงานร้านค้า',d:'สรุปยอดและตรวจสอบข้อมูลรถยนต์พนักงานร้านค้า',i:'🏪',c:'p',u:'SBK-Shop-Vehicle-Dashboard/',g:['#0891b2','#2563eb'],lock:1},
  {n:'Dashboard รถยนต์พนักงาน',d:'สรุปและตรวจสอบข้อมูลรถยนต์พนักงาน แยกตามแผนก',i:'🪪',c:'p',u:'SBK-Staff-Vehicle-Dashboard/',g:['#9333ea','#ec4899'],lock:1},
  {n:'Car Database Pro',d:'ฐานข้อมูลรถยนต์ในลานจอด',i:'🚗',c:'p',u:'Car_Dadabase_Pro/',g:['#16a34a','#84cc16']},
