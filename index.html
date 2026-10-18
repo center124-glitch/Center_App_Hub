@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- SBK Center Hub v23 — v23: โหมด PC ลดขนาดการ์ดลงอีก 30% (6 คอลัมน์ ≥1360px / 4 คอลัมน์ 900-1359px) ให้เห็นทุกแอปในหน้าเดียว
+<!-- SBK Center Hub v24 — v24: โหมด PC ขยายการ์ดขึ้น ~18% จาก v23 (ฟอนต์/ไอคอน/ความสูง/ระยะห่าง) และจอ ≥1600px ขยายพื้นที่เนื้อหาให้การ์ดกว้างขึ้น
+     v23 — v23: โหมด PC ลดขนาดการ์ดลงอีก 30% (6 คอลัมน์ ≥1360px / 4 คอลัมน์ 900-1359px) ให้เห็นทุกแอปในหน้าเดียว
      v22 — v22: แทนที่แอป "รายงาน Personality ประจำวัน" (Daily-Personality-Report) ด้วย "ศูนย์รายงาน Personality" (Security-Personality-Report); Monthly-Personality-Report ไม่ได้อยู่ในรายการอยู่แล้ว
      v21 — v21: เพิ่มแอป "SBK บันทึกเหตุการณ์ประจำวัน" (SBK-Daily-Log) หมวด รปภ. & CCTV
      v20 — v20: แก้คำเตือน "สร้างไอคอนไม่สำเร็จ ... Invalid URL" (ข้ามการสร้าง manifest เมื่อไม่ได้เปิดผ่าน http/https)
@@ -220,6 +221,25 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  main{padding-top:14px}.tabs{padding:8px 2px 10px}
 }
 @media(min-width:1360px){.grid{grid-template-columns:repeat(6,1fr)}}
+/* ===== v24 : โหมด PC — ขยายการ์ดขึ้น ~18% จาก v23 (v23 เล็กเกินไป) ให้พอดี ไม่เล็กไม่ใหญ่ และยังเห็นครบทุกแอปในหน้าเดียว =====
+   ฟอนต์/ไอคอน/ระยะห่าง/ความสูง ×1.18 · จอกว้าง ≥1600px ขยายพื้นที่เนื้อหา 1480→1760px การ์ดจึงกว้างขึ้นตามด้วย
+   ใช้เฉพาะจอ ≥1360px (6 คอลัมน์ 3 แถว) — จอ 900-1359px เป็น 4 คอลัมน์ 4 แถว ถ้าขยายด้วยจะเห็นไม่ครบในหน้าเดียว จึงคงขนาด v23 */
+@media(min-width:1360px){
+ .grid{gap:14px}
+ .card{column-gap:12px;min-height:111px;padding:14px 15px;border-radius:18px;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+ .card::after{width:112px;height:112px;right:-30px;top:-30px}
+ .ic{font-size:31px}
+ .card h3{font-size:14.8px;padding-right:16px}
+ .card p{font-size:11.8px}
+ .go,.card:hover .go{margin-top:4px;font-size:11px;padding:2px 11px}
+ .lock{top:7px;right:8px;font-size:10.5px;padding:1px 7px}
+}
+@media(min-width:1600px){main{max-width:1760px}.grid{gap:16px}}
+/* การ์ดที่ต้องใช้รหัสผ่าน: เว้นที่ขวาของชื่อแอปให้ป้าย "🔒 รหัสผ่าน" ไม่ทับตัวอักษร (พบทับใน v23 ทุกขนาดจอ PC) */
+.card.locked h3{padding-right:78px}
+/* จอ 900-1599px การ์ดแคบ: แสดงเฉพาะไอคอน 🔒 (ข้อความยังอยู่ใน title/tooltip) ไม่ให้ชื่อแอปถูกบีบจนการ์ดสูงเกินหน้าจอ */
+@media(min-width:900px) and (max-width:1599px){.lock .lt{display:none}.card.locked h3{padding-right:30px}}
+@media(min-width:1600px){.card.locked h3{padding-right:76px}}
 </style>
 </head>
 <body>
@@ -292,7 +312,7 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty" hidden>🔎 ไม่พบแอปในหมวดนี้<br><button id="resetF">แสดงทั้งหมด</button></div>
 </main>
-<footer>SBK Center Hub v23 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
+<footer>SBK Center Hub v24 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
 <div id="net" role="status">📡 ออฟไลน์ — กรุณาตรวจสอบอินเทอร์เน็ต</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -384,8 +404,8 @@ function toggleTheme(){
 function render(){
  const list=APPS.filter(a=>cat==='all'||a.c===cat);
  const key=cat+'|'+list.map(a=>a.u).join(),an=key!==lastKey;lastKey=key; // เล่นอนิเมชันเฉพาะตอนผลลัพธ์เปลี่ยน
- $('#grid').innerHTML=list.map((a,x)=>`<button type="button" class="card ${an?'anim':''}" style="background:linear-gradient(135deg,${a.g[0]},${a.g[1]});animation-delay:${x*60}ms" data-u="${esc(a.u)}" aria-label="เปิด ${esc(a.n)}">
-  ${a.lock?'<span class="lock" title="ต้องใช้รหัสผ่านเจ้าหน้าที่">🔒 รหัสผ่าน</span>':''}
+ $('#grid').innerHTML=list.map((a,x)=>`<button type="button" class="card${an?' anim':''}${a.lock?' locked':''}" style="background:linear-gradient(135deg,${a.g[0]},${a.g[1]});animation-delay:${x*60}ms" data-u="${esc(a.u)}" aria-label="เปิด ${esc(a.n)}">
+  ${a.lock?'<span class="lock" title="ต้องใช้รหัสผ่านเจ้าหน้าที่">🔒<span class="lt"> รหัสผ่าน</span></span>':''}
   <div class="ic" aria-hidden="true" style="animation-delay:-${(x*0.45).toFixed(2)}s">${esc(a.i)}</div><h3>${esc(a.n)}</h3><p>${esc(a.d)}</p><span class="go">เปิดแอป →</span></button>`).join('');
  $('#empty').hidden=list.length>0;
  $('#tabs').innerHTML=CATS.map(c=>`<button type="button" role="tab" aria-selected="${c[0]===cat}" class="tab ${c[0]===cat?'on':''}" data-c="${c[0]}">${esc(c[1])}<span class="n">${c[0]==='all'?APPS.length:APPS.filter(a=>a.c===c[0]).length}</span></button>`).join('');
