@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- SBK Center Hub v21 — v21: เพิ่มแอป "SBK บันทึกเหตุการณ์ประจำวัน" (SBK-Daily-Log) หมวด รปภ. & CCTV
+<!-- SBK Center Hub v23 — v23: โหมด PC ลดขนาดการ์ดลงอีก 30% (6 คอลัมน์ ≥1360px / 4 คอลัมน์ 900-1359px) ให้เห็นทุกแอปในหน้าเดียว
+     v22 — v22: แทนที่แอป "รายงาน Personality ประจำวัน" (Daily-Personality-Report) ด้วย "ศูนย์รายงาน Personality" (Security-Personality-Report); Monthly-Personality-Report ไม่ได้อยู่ในรายการอยู่แล้ว
+     v21 — v21: เพิ่มแอป "SBK บันทึกเหตุการณ์ประจำวัน" (SBK-Daily-Log) หมวด รปภ. & CCTV
      v20 — v20: แก้คำเตือน "สร้างไอคอนไม่สำเร็จ ... Invalid URL" (ข้ามการสร้าง manifest เมื่อไม่ได้เปิดผ่าน http/https)
      v19 — v19: ลบช่องค้นหาออก เพื่อให้เห็นการ์ดแอปเต็มหน้าจอมากขึ้น
      v18 — v18: เพิ่มแอป "SBK Fines" (Security_Fines_A-B-C) หมวด รปภ. & CCTV + ลดขนาดการ์ดทุกการแสดงผลลง 10%
@@ -203,6 +205,21 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
 @media(max-width:359px){#theme{display:none}}
 @media(max-height:500px) and (orientation:landscape){.logo{width:80px;height:80px}.scr h1{font-size:24px}.scr .sub{display:none}.dt{padding:6px 18px;margin-top:2px}.dt .t{font-size:28px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+/* ===== v23 : โหมด PC — การ์ดเล็กลงอีก 30% ให้เห็นครบทุกแอปในหน้าเดียว (ไม่ต้องเลื่อน) =====
+   ความกว้าง: 4 คอลัมน์ (จอ 900-1359px) / 6 คอลัมน์ (จอ ≥1360px) ความสูงการ์ด 135→94px
+   การ์ดจัดแบบไอคอนซ้าย-ข้อความขวา (เหมือนมือถือ) คำอธิบายตัดที่ 2 บรรทัด */
+@media(min-width:900px){
+ .grid{grid-template-columns:repeat(4,1fr);gap:12px}
+ .card{display:grid;grid-template-columns:auto 1fr;grid-template-areas:"ic h" "ic p" "ic go";column-gap:10px;row-gap:1px;align-items:start;min-height:94px;padding:12px;border-radius:15px;box-shadow:0 6px 16px rgba(0,0,0,.16)}
+ .card::after{width:95px;height:95px;right:-26px;top:-26px}
+ .ic{grid-area:ic;align-self:center;font-size:26px}
+ .card h3{grid-area:h;font-size:12.6px;line-height:1.35;padding-right:14px}
+ .card p{grid-area:p;font-size:10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ .go,.card:hover .go{grid-area:go;margin-top:3px;font-size:9.5px;padding:1px 9px}
+ .lock{top:6px;right:7px;font-size:9px;padding:1px 6px}
+ main{padding-top:14px}.tabs{padding:8px 2px 10px}
+}
+@media(min-width:1360px){.grid{grid-template-columns:repeat(6,1fr)}}
 </style>
 </head>
 <body>
@@ -275,7 +292,7 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty" hidden>🔎 ไม่พบแอปในหมวดนี้<br><button id="resetF">แสดงทั้งหมด</button></div>
 </main>
-<footer>SBK Center Hub v21 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
+<footer>SBK Center Hub v23 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
 <div id="net" role="status">📡 ออฟไลน์ — กรุณาตรวจสอบอินเทอร์เน็ต</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -298,7 +315,7 @@ const B='https://center124-glitch.github.io/';
 /* u = โฟลเดอร์บน GitHub Pages (ตรวจแล้วว่าเปิดได้จริง แม้ชื่อบางตัวดูแปลก เช่น "-CCTV_OPS", "Car_Dadabase_Pro" — ห้ามแก้ตัวสะกด) */
 const APPS=[
  {n:'เปรียบเทียบยอดรายวัน SDC vs SBK',d:'บันทึกและรายงานเปรียบเทียบยอดคน/รถ/MRT/EBM ระหว่าง SDC กับ SBK',i:'📊',c:'a',u:'SDC-vs-SBK-Daily-Compare/',g:['#4f46e5','#06b6d4']},
- {n:'รายงาน Personality ประจำวัน',d:'ผลตรวจ Personality ประจำวัน แยกตามกะ นำเข้า Excel/Sheets',i:'🏆',c:'a',u:'Daily-Personality-Report/',g:['#f59e0b','#ef4444']},
+ {n:'ศูนย์รายงาน Personality',d:'รายงานผลตรวจบุคลิกภาพ รายวัน/สัปดาห์/เดือน/ปี นำเข้า Excel พร้อมรายงาน A4',i:'🏆',c:'a',u:'Security-Personality-Report/',g:['#f59e0b','#ef4444']},
  {n:'ตารางเวร รปภ.',d:'ตารางเวรและเช็คการมาทำงาน เจ้าหน้าที่รักษาความปลอดภัย',i:'🛡️',c:'s',u:'Security-Working-Schedule/',g:['#2563eb','#7c3aed']},
  {n:'ฐานข้อมูล CCTV (V42)',d:'ทะเบียนและตำแหน่งกล้องวงจรปิด',i:'📹',c:'s',u:'CCTV-Database-V42/',g:['#0ea5e9','#4f46e5']},
  {n:'CCTV OPS',d:'งานปฏิบัติการกล้องวงจรปิด',i:'🎥',c:'s',u:'-CCTV_OPS/',g:['#db2777','#f97316']},
