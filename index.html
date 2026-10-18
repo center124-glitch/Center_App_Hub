@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- SBK Center Hub v24 — v24: โหมด PC ขยายการ์ดขึ้น ~18% จาก v23 (ฟอนต์/ไอคอน/ความสูง/ระยะห่าง) และจอ ≥1600px ขยายพื้นที่เนื้อหาให้การ์ดกว้างขึ้น
+<!-- SBK Center Hub v25 — v25: จัดการ์ดให้อยู่ในกรอบกึ่งกลางจอ (กว้าง ≤88%) เลือกคอลัมน์อัตโนมัติไม่เหลือช่องโหว่ (16 แอป = 4×4) และยืดเต็มความสูงจอพอดี
+     v24 — v24: โหมด PC ขยายการ์ดขึ้น ~18% จาก v23 (ฟอนต์/ไอคอน/ความสูง/ระยะห่าง) และจอ ≥1600px ขยายพื้นที่เนื้อหาให้การ์ดกว้างขึ้น
      v23 — v23: โหมด PC ลดขนาดการ์ดลงอีก 30% (6 คอลัมน์ ≥1360px / 4 คอลัมน์ 900-1359px) ให้เห็นทุกแอปในหน้าเดียว
      v22 — v22: แทนที่แอป "รายงาน Personality ประจำวัน" (Daily-Personality-Report) ด้วย "ศูนย์รายงาน Personality" (Security-Personality-Report); Monthly-Personality-Report ไม่ได้อยู่ในรายการอยู่แล้ว
      v21 — v21: เพิ่มแอป "SBK บันทึกเหตุการณ์ประจำวัน" (SBK-Daily-Log) หมวด รปภ. & CCTV
@@ -234,7 +235,25 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  .go,.card:hover .go{margin-top:4px;font-size:11px;padding:2px 11px}
  .lock{top:7px;right:8px;font-size:10.5px;padding:1px 7px}
 }
-@media(min-width:1600px){main{max-width:1760px}.grid{gap:16px}}
+@media(min-width:1600px){.grid{gap:16px}}
+/* ===== v25 : จัดการ์ดให้อยู่ในกรอบสวยงามลงตัว (โหมด PC/โน้ตบุ๊ก ≥900px) =====
+   - พื้นที่เนื้อหากว้างไม่เกิน 88% ของจอ (สูงสุด 1500px) จัดกึ่งกลาง ไม่ยืดชนขอบจอ
+   - JS fitGrid() เลือกจำนวนคอลัมน์ที่ไม่เหลือช่องว่าง (16 แอป = 4×4) และยืดความสูงการ์ดให้เต็มพื้นที่ถึงขอบล่างจอพอดี
+   - ขนาดตัวอักษร/ไอคอนปรับตามขนาดการ์ดผ่านตัวแปร --k */
+@media(min-width:900px){
+ main{max-width:min(1480px,86vw);padding-left:0;padding-right:0}
+ .grid.fit{grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));grid-auto-rows:var(--rowh,120px);gap:var(--gap,14px)}
+ .grid.fit .card{min-height:0;height:100%;align-content:center;column-gap:calc(14px*var(--k,1));padding:calc(12px*var(--k,1)) calc(18px*var(--k,1));border-radius:18px}
+ .grid.fit .ic{font-size:calc(34px*var(--k,1))}
+ .grid.fit .card h3{font-size:calc(15.5px*var(--k,1));padding-right:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ .grid.fit .card p{font-size:calc(12px*var(--k,1))}
+ .grid.fit .go,.grid.fit .card:hover .go{font-size:calc(11px*var(--k,1));margin-top:calc(6px*var(--k,1));justify-self:start;padding:calc(2px*var(--k,1)) calc(14px*var(--k,1))} /* ปุ่มเป็นป้ายสั้น ไม่ยืดเต็มการ์ด */
+ .grid.fit .card::after{width:calc(120px*var(--k,1));height:calc(120px*var(--k,1))}
+ /* ป้าย 🔒 รหัสผ่าน ย้ายไปมุมขวาล่าง (แถวเดียวกับปุ่มเปิดแอป) — ไม่ต้องเว้นที่ขวาของชื่อแอป ชื่อจึงไม่ถูกบีบจนข้อความล้นทับปุ่ม */
+ .grid.fit .card.locked h3{padding-right:0}
+ .grid.fit .lock{top:auto;bottom:calc(12px*var(--k,1));right:calc(14px*var(--k,1));font-size:calc(10.5px*var(--k,1));padding:calc(2px*var(--k,1)) calc(9px*var(--k,1))}
+ .grid.fit .lock .lt{display:inline}
+}
 /* การ์ดที่ต้องใช้รหัสผ่าน: เว้นที่ขวาของชื่อแอปให้ป้าย "🔒 รหัสผ่าน" ไม่ทับตัวอักษร (พบทับใน v23 ทุกขนาดจอ PC) */
 .card.locked h3{padding-right:78px}
 /* จอ 900-1599px การ์ดแคบ: แสดงเฉพาะไอคอน 🔒 (ข้อความยังอยู่ใน title/tooltip) ไม่ให้ชื่อแอปถูกบีบจนการ์ดสูงเกินหน้าจอ */
@@ -312,7 +331,7 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty" hidden>🔎 ไม่พบแอปในหมวดนี้<br><button id="resetF">แสดงทั้งหมด</button></div>
 </main>
-<footer>SBK Center Hub v24 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
+<footer>SBK Center Hub v25 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
 <div id="net" role="status">📡 ออฟไลน์ — กรุณาตรวจสอบอินเทอร์เน็ต</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -409,12 +428,45 @@ function render(){
   <div class="ic" aria-hidden="true" style="animation-delay:-${(x*0.45).toFixed(2)}s">${esc(a.i)}</div><h3>${esc(a.n)}</h3><p>${esc(a.d)}</p><span class="go">เปิดแอป →</span></button>`).join('');
  $('#empty').hidden=list.length>0;
  $('#tabs').innerHTML=CATS.map(c=>`<button type="button" role="tab" aria-selected="${c[0]===cat}" class="tab ${c[0]===cat?'on':''}" data-c="${c[0]}">${esc(c[1])}<span class="n">${c[0]==='all'?APPS.length:APPS.filter(a=>a.c===c[0]).length}</span></button>`).join('');
+ scheduleFit();
 }
+/* ===== v25: จัดการ์ดพอดีกรอบ =====
+   ทำไมใช้ JS: จำนวนแอปเปลี่ยนตามหมวดที่เลือก/แอปที่เพิ่มในอนาคต และความสูงจอแต่ละเครื่องไม่เท่ากัน (ซูม 100/125/150%)
+   CSS อย่างเดียวจึงเลือกคอลัมน์ที่ "ไม่เหลือช่องโหว่" และยืดให้เต็มความสูงที่เหลือไม่ได้ */
+const FIT={minW:900,minH:560,minRow:112,maxRow:200,minCol:200,ratio:2.4,bottom:44}; // minRow 112: ต่ำกว่านี้ข้อความในการ์ดถูกตัด → ยอมให้เลื่อนจอเล็กน้อยแทน
+let fitRaf=0;
+function scheduleFit(){cancelAnimationFrame(fitRaf);fitRaf=requestAnimationFrame(fitGrid)}
+function fitGrid(){
+ const g=$('#grid');if(!g)return;
+ const n=g.children.length;
+ if(innerWidth<FIT.minW||innerHeight<FIT.minH||!n){g.classList.remove('fit');['--cols','--rowh','--gap','--k'].forEach(p=>g.style.removeProperty(p));return}
+ g.classList.add('fit');
+ const W=g.clientWidth,gap=W>=1300?16:14;
+ const top=g.getBoundingClientRect().top+scrollY;          // ตำแหน่งจริงในหน้า (ไม่ขึ้นกับการเลื่อน)
+ const availH=Math.max(FIT.minRow,innerHeight-top-FIT.bottom);
+ let best=null;
+ for(let cols=Math.min(6,n);cols>=1;cols--){
+  const rows=Math.ceil(n/cols),cw=(W-gap*(cols-1))/cols;
+  if(cw<FIT.minCol&&cols>1)continue;
+  if(cw>W*0.5&&n>2)continue;                                  // ไม่ให้การ์ดกว้างเกินครึ่งจอ
+  const rh=(availH-gap*(rows-1))/rows,rowH=Math.max(FIT.minRow,Math.min(FIT.maxRow,cw/1.7,rh)); // cw/1.7: ไม่ให้การ์ดสูงเกินสัดส่วน (กรณีหมวดที่มีแอปน้อย)
+  const empty=rows*cols-n;
+  // คะแนน: ช่องว่างท้ายแถว (หนักสุด) + สัดส่วนการ์ดห่างจากที่สวย (≈2.4:1) + โทษถ้าต้องเลื่อนจอ
+  const score=empty*3+Math.abs(cw/rowH-FIT.ratio)*1.5+(rh<FIT.minRow?20:0);
+  if(!best||score<best.score)best={cols,rows,cw,rowH,score};
+ }
+ const k=Math.max(.86,Math.min(1.3,Math.min(best.rowH/120,best.cw/290)));
+ g.style.setProperty('--cols',best.cols);g.style.setProperty('--rowh',Math.floor(best.rowH)+'px');
+ g.style.setProperty('--gap',gap+'px');g.style.setProperty('--k',k.toFixed(3));
+}
+let fitRt;addEventListener('resize',()=>{clearTimeout(fitRt);fitRt=setTimeout(fitGrid,120)});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(scheduleFit); // ฟอนต์โหลดเสร็จ ความสูงหัวเว็บเปลี่ยน → คำนวณใหม่
 function renderRecent(){
  let r=[];try{r=JSON.parse(ls.get('hubRecent')||'[]')}catch(e){r=[]}
  r=(Array.isArray(r)?r:[]).filter(u=>typeof u==='string'&&byU(u)).slice(0,4); // ทิ้งรายการที่ไม่มีแล้ว
  $('#rec').innerHTML=r.length?'<span class="rl">⏱ ใช้ล่าสุด</span>'+r.map(u=>{const a=byU(u);return `<button type="button" class="rc" data-u="${esc(u)}">${esc(a.i)} ${esc(a.n)}</button>`}).join(''):'';
  $('#rec').hidden=!r.length;
+ scheduleFit();
 }
 function remember(u){
  let r=[];try{r=JSON.parse(ls.get('hubRecent')||'[]')}catch(e){}
@@ -537,7 +589,7 @@ function reloadFrame(){if(viewing)loadFrame(B+viewing.u)}
 function modeLabel(){$('#mode').innerHTML=embed?'📥<span class="lbl"> เปิดในแอป</span>':'🗗<span class="lbl"> เปิดแท็บใหม่</span>';$('#mode').title=embed?'ตอนนี้: เปิดแอปภายในหน้านี้ (กดเพื่อเปลี่ยนเป็นแท็บใหม่)':'ตอนนี้: เปิดแอปในแท็บใหม่ (กดเพื่อเปลี่ยนเป็นเปิดในหน้านี้)'}
 
 /* ===== 7. Splash เข้าอัตโนมัติ ===== */
-function enter(){if(entered)return;entered=true;$('#splash').classList.add('hide');countUp($('#nApps'),APPS.length);countUp($('#nCats'),CATS.length-1)}
+function enter(){if(entered)return;entered=true;$('#splash').classList.add('hide');scheduleFit();countUp($('#nApps'),APPS.length);countUp($('#nCats'),CATS.length-1)}
 function startSplash(){
  const s=performance.now(),pg=$('#pg');
  setTimeout(enter,SPLASH_MS); // สำรองไว้: rAF หยุดเมื่อแท็บอยู่เบื้องหลัง — กลับมาแล้วต้องเข้าได้ ไม่ค้างหน้า Splash
