@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- SBK Center Hub v26 — v26: เพิ่มแอป "HeadCount Online" (HeadCount-Online) หมวด วิเคราะห์ & รายงาน; จำนวนแอปที่หารไม่ลงตัว (17) จัดแถวสุดท้ายกึ่งกลาง และเลือกคอลัมน์ให้เห็นครบในหน้าเดียว
+<!-- SBK Center Hub v28 — v28: เมนูแอดมินบันทึกในเบราว์เซอร์เครื่องนี้ ไม่ต้องใช้ Apps Script; แอปเริ่มต้นใหม่ในเวอร์ชันหน้าเติมให้อัตโนมัติ; แก้บั๊ก v27 คำทักทาย/ประกายดาวไม่แสดง
+     v27 — v27: เมนูแอดมิน ⚙️ เพิ่ม/แก้ไข/ลบ/เรียงลำดับ/ซ่อนแอป
+     v26 — v26: เพิ่มแอป "HeadCount Online" (HeadCount-Online) หมวด วิเคราะห์ & รายงาน; จำนวนแอปที่หารไม่ลงตัว (17) จัดแถวสุดท้ายกึ่งกลาง และเลือกคอลัมน์ให้เห็นครบในหน้าเดียว
      v25 — v25: จัดการ์ดให้อยู่ในกรอบกึ่งกลางจอ (กว้าง ≤88%) เลือกคอลัมน์อัตโนมัติไม่เหลือช่องโหว่ (16 แอป = 4×4) และยืดเต็มความสูงจอพอดี
      v24 — v24: โหมด PC ขยายการ์ดขึ้น ~18% จาก v23 (ฟอนต์/ไอคอน/ความสูง/ระยะห่าง) และจอ ≥1600px ขยายพื้นที่เนื้อหาให้การ์ดกว้างขึ้น
      v23 — v23: โหมด PC ลดขนาดการ์ดลงอีก 30% (6 คอลัมน์ ≥1360px / 4 คอลัมน์ 900-1359px) ให้เห็นทุกแอปในหน้าเดียว
@@ -262,6 +264,94 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
 /* จอ 900-1599px การ์ดแคบ: แสดงเฉพาะไอคอน 🔒 (ข้อความยังอยู่ใน title/tooltip) ไม่ให้ชื่อแอปถูกบีบจนการ์ดสูงเกินหน้าจอ */
 @media(min-width:900px) and (max-width:1599px){.lock .lt{display:none}.card.locked h3{padding-right:30px}}
 @media(min-width:1600px){.card.locked h3{padding-right:76px}}
+
+/* ===== เมนูแอดมิน — เพิ่ม/แก้ไข/ลบ/เรียงลำดับ/ซ่อนแอป (v28: บันทึกในเบราว์เซอร์เครื่องนี้) ===== */
+.srcinfo{display:inline-block;margin-top:4px;font-size:11px;opacity:.85}
+.srcinfo.err{color:#f87171}
+#adm,#aed,#acf{position:fixed;inset:0;z-index:150;display:flex;align-items:stretch;justify-content:center;background:rgba(8,10,30,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom))}
+#aed,#acf{z-index:160;align-items:center}
+#acf{z-index:170}
+#adm[hidden],#aed[hidden],#acf[hidden]{display:none}
+.apanel{width:100%;max-width:1000px;display:flex;flex-direction:column;background:var(--bg);color:var(--text);border-radius:22px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5);border:1px solid var(--line);animation:up .3s ease-out}
+.abar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 16px;color:#fff;background:var(--brand)}
+.abar b{font-size:17px;flex:1;min-width:150px}
+.abtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 14px;border-radius:12px;font-size:14px;font-weight:600;background:var(--card);color:var(--text);border:1.5px solid var(--line);transition:transform .15s,opacity .2s;white-space:nowrap}
+.abar .abtn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.3);color:#fff}
+.abtn.pri{background:linear-gradient(120deg,#16a34a,#0d9488)!important;border-color:transparent!important;color:#fff!important}
+.abtn.dng{background:#dc2626;border-color:transparent;color:#fff}
+.abtn:disabled{opacity:.45;cursor:not-allowed}
+.abtn:not(:disabled):active{transform:scale(.95)}
+.abtn .sp2{width:16px;height:16px;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;animation:sp .8s linear infinite}
+.abody{flex:1;overflow:auto;padding:14px 16px 20px;-webkit-overflow-scrolling:touch}
+.anote{border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.6;margin-bottom:12px;border:1.5px solid}
+.anote.warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.45)}
+.anote.err{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.45)}
+.anote.ok{background:rgba(22,163,74,.12);border-color:rgba(22,163,74,.4)}
+.anote b{display:block}
+.atools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.atools .cnt{flex:1;min-width:140px;font-size:13px;color:var(--muted)}
+.alist{display:flex;flex-direction:column;gap:8px}
+.ar{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:var(--card);border:1.5px solid var(--line);transition:box-shadow .2s,opacity .2s}
+.ar.off{opacity:.55}
+.ar.drag{box-shadow:0 12px 30px rgba(0,0,0,.35);border-color:#7c3aed;position:relative;z-index:2;opacity:.95}
+.ar.new{animation:flashrow 1.2s}
+@keyframes flashrow{0%,40%{box-shadow:0 0 0 3px #22c55e}}
+.ah{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;font-size:20px;color:var(--muted);padding:6px 4px;line-height:1}
+.ar.drag .ah{cursor:grabbing}
+.anum{width:26px;text-align:center;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
+.aic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex:none;box-shadow:0 4px 10px rgba(0,0,0,.18)}
+.ainfo{flex:1;min-width:0;line-height:1.35}
+.ainfo b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ainfo small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.atag{display:inline-block;font-size:11px;padding:0 8px;border-radius:99px;background:var(--line);margin-right:4px;color:var(--text)}
+.atag.h{background:#f59e0b;color:#1f1300}
+.atag.l{background:#334155;color:#fff}
+.aact{display:flex;gap:4px;flex:none;align-items:center}
+.aact button{width:38px;height:38px;border-radius:10px;background:transparent;border:1.5px solid var(--line);font-size:15px;color:var(--text)}
+.aact button:disabled{opacity:.3;cursor:not-allowed}
+.aact button[data-act=del]{color:#ef4444}
+.sw{position:relative;display:inline-block;width:46px;height:26px;flex:none;cursor:pointer}
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw span{position:absolute;inset:0;border-radius:99px;background:#94a3b8;transition:.2s}
+.sw span::after{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw input:checked+span{background:#16a34a}
+.sw input:checked+span::after{transform:translateX(20px)}
+.sw input:focus-visible+span{outline:3px solid var(--focus);outline-offset:2px}
+.aempty{text-align:center;padding:30px;color:var(--muted)}
+/* หน้าต่างแก้ไข / ยืนยัน */
+.abox{width:100%;max-width:760px;max-height:calc(100dvh - 24px);overflow:auto;background:var(--bg);color:var(--text);border-radius:22px;border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.5);animation:up .25s ease-out}
+.abox.sm{max-width:440px}
+.abox h3{font-size:18px;padding:16px 18px 6px}
+.aform{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;padding:10px 18px 4px}
+.aform .full{grid-column:1/-1}
+.aform label{display:grid;gap:4px;font-size:13px;color:var(--muted);font-weight:500}
+.aform input[type=text],.aform input[type=url],.aform select,.aform textarea{font:inherit;font-size:16px;color:var(--text);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;outline:0;width:100%}
+.aform textarea{resize:vertical;min-height:62px}
+.aform input:focus,.aform select:focus,.aform textarea:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.18)}
+.aform [aria-invalid=true]{border-color:#ef4444!important}
+.aform .hint{font-size:12px;color:var(--muted);word-break:break-all}
+.aform .hint a{color:#7c3aed}
+.ferr{color:#ef4444;font-size:12.5px;min-height:1.2em}
+.colrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.colrow input[type=color]{width:44px;height:36px;border:1.5px solid var(--line);border-radius:10px;background:transparent;padding:2px;cursor:pointer}
+.pres{display:flex;gap:6px;flex-wrap:wrap}
+.pres button{width:30px;height:30px;border-radius:9px;border:2px solid transparent}
+.pres button.on{border-color:var(--text)}
+.chk{display:flex!important;grid-auto-flow:column;align-items:center;gap:8px!important;color:var(--text)!important;font-size:14px!important}
+.chk input{width:20px;height:20px;accent-color:#7c3aed}
+.apv{grid-column:1/-1;display:flex;justify-content:center;padding:6px 0}
+.apv .card{width:100%;max-width:340px;min-height:120px;pointer-events:none;animation:none;transform:none}
+.afoot{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;padding:12px 18px 18px}
+.acmsg{padding:4px 18px 4px;font-size:14.5px;line-height:1.65}
+@media(max-width:640px){
+ .aform{grid-template-columns:1fr}
+ .ar{flex-wrap:wrap;gap:6px 8px}
+ .ainfo{flex-basis:calc(100% - 140px)}
+ .aact{width:100%;justify-content:flex-end}
+ .abar b{min-width:100%}
+ .abar .abtn:not(.pri) .lbl{display:none} /* แถบบนเหลือไอคอน ยกเว้นปุ่มบันทึก — ปุ่มเครื่องมือยังมีข้อความ ใช้ง่ายบนมือถือ */
+ .atools .abtn{flex:1 1 auto;justify-content:center;font-size:13px;padding:8px 10px}
+}
 </style>
 </head>
 <body>
@@ -323,6 +413,7 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
   <div class="hgreet"><div class="hi"><span id="hi"></span> <span class="wave">👋</span></div><div class="hs">เลือกระบบที่ต้องการใช้งานได้เลย</div></div>
   <div class="chips"><div class="chip"><b id="nApps">0</b><span>แอปทั้งหมด</span></div><div class="chip"><b id="nCats">0</b><span>หมวดงาน</span></div></div>
  </div>
+ <button class="ib" id="adminBtn" title="จัดการแอป (เพิ่ม/ลบ/เรียงลำดับ)" aria-label="จัดการแอป">⚙️</button>
  <button class="ib" id="theme" aria-label="สลับโหมดมืด/สว่าง">🌙</button>
  <button class="ib" id="mode" aria-label="สลับวิธีเปิดแอป"></button>
  <div class="clk"><span data-d></span><b data-t></b></div>
@@ -334,7 +425,53 @@ body.noscroll #net{top:calc(66px + env(safe-area-inset-top,0px))}
  <div class="grid" id="grid"></div>
  <div class="empty" id="empty" hidden>🔎 ไม่พบแอปในหมวดนี้<br><button id="resetF">แสดงทั้งหมด</button></div>
 </main>
-<footer>SBK Center Hub v26 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span></footer>
+<footer>SBK Center Hub v28 · เมนูทั้งหมดเปิดจากระบบเดิมโดยตรง ข้อมูลเป็นปัจจุบันเสมอ<span class="kbd"><br>ปุ่มลัด: Esc กลับ</span><br><span class="srcinfo" id="srcInfo"></span></footer>
+
+<!-- ===== v27: เมนูแอดมิน ===== -->
+<div id="adm" hidden role="dialog" aria-modal="true" aria-labelledby="admT">
+ <div class="apanel">
+  <div class="abar"><b id="admT">⚙️ จัดการแอป</b>
+   <button class="abtn" id="admAdd">＋<span class="lbl"> เพิ่มแอป</span></button>
+   <button class="abtn pri" id="admSave" disabled>💾<span class="lbl"> บันทึก</span></button>
+   <button class="abtn" id="admClose" aria-label="ปิดเมนูแอดมิน">✕</button></div>
+  <div class="abody">
+   <div id="admNote"></div>
+   <div class="atools">
+    <span class="cnt" id="admCnt"></span>
+    <button class="abtn" id="admReload" title="ยกเลิกการแก้ไขที่ยังไม่บันทึก กลับไปรายการที่บันทึกไว้">↶<span class="lbl"> ยกเลิกการแก้ไข</span></button>
+    <button class="abtn" id="admExport" title="ดาวน์โหลดรายการเป็นไฟล์ JSON เก็บสำรอง">⬇<span class="lbl"> สำรองไฟล์</span></button>
+    <button class="abtn" id="admImport" title="นำเข้ารายการจากไฟล์ JSON">⬆<span class="lbl"> นำเข้าไฟล์</span></button>
+    <button class="abtn" id="admReset" title="คืนรายการแอปเริ่มต้นที่อยู่ในไฟล์ HTML">↺<span class="lbl"> ค่าเริ่มต้น</span></button>
+    <input type="file" id="admFile" accept=".json,application/json" hidden>
+   </div>
+   <div class="alist" id="admList"></div>
+  </div>
+ </div>
+</div>
+<div id="aed" hidden role="dialog" aria-modal="true" aria-labelledby="aedT">
+ <form class="abox" id="aedForm" novalidate>
+  <h3 id="aedT">เพิ่มแอป</h3>
+  <div class="aform">
+   <label>ชื่อแอป *<input type="text" id="fN" maxlength="80" autocomplete="off" placeholder="เช่น HeadCount Online"></label>
+   <label>ไอคอน (อีโมจิ 1 ตัว)<input type="text" id="fI" autocomplete="off" placeholder="เช่น 🚶"></label>
+   <label class="full">คำอธิบาย<textarea id="fD" maxlength="200" placeholder="อธิบายสั้นๆ ว่าแอปนี้ใช้ทำอะไร"></textarea></label>
+   <label>หมวด *<select id="fC"></select></label>
+   <label>ลิงก์ * <input type="text" id="fU" autocomplete="off" inputmode="url" placeholder="ชื่อโฟลเดอร์ เช่น HeadCount-Online หรือ https://..."></label>
+   <div class="full hint" id="fUHint"></div>
+   <div class="full"><label style="margin-bottom:4px">สีการ์ด</label>
+    <div class="colrow"><input type="color" id="fG1" aria-label="สีที่ 1"><input type="color" id="fG2" aria-label="สีที่ 2"><div class="pres" id="fPres"></div></div></div>
+   <label class="chk"><input type="checkbox" id="fL"> แสดงป้าย 🔒 ต้องใช้รหัสผ่าน</label>
+   <label class="chk"><input type="checkbox" id="fS" checked> แสดงบน Hub</label>
+   <div class="apv" id="fPrev"></div>
+   <div class="full ferr" id="fErr" role="alert"></div>
+  </div>
+  <div class="afoot"><button type="button" class="abtn" id="aedTest">🔗 ทดสอบเปิดลิงก์</button><button type="button" class="abtn" id="aedCancel">ยกเลิก</button><button type="submit" class="abtn pri">✓ ตกลง</button></div>
+ </form>
+</div>
+<div id="acf" hidden role="alertdialog" aria-modal="true" aria-labelledby="acfT">
+ <div class="abox sm"><h3 id="acfT"></h3><div class="acmsg" id="acfM"></div>
+  <div class="afoot"><button type="button" class="abtn" id="acfNo">ยกเลิก</button><button type="button" class="abtn dng" id="acfYes">ยืนยัน</button></div></div>
+</div>
 <div id="net" role="status">📡 ออฟไลน์ — กรุณาตรวจสอบอินเทอร์เน็ต</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -355,7 +492,7 @@ const SPLASH_MS=3000;          // แสดงโลโก้ 3 วินาท�
 const LOAD_SLOW_MS=8000,LOAD_FAIL_MS=25000;
 const B='https://center124-glitch.github.io/';
 /* u = โฟลเดอร์บน GitHub Pages (ตรวจแล้วว่าเปิดได้จริง แม้ชื่อบางตัวดูแปลก เช่น "-CCTV_OPS", "Car_Dadabase_Pro" — ห้ามแก้ตัวสะกด) */
-const APPS=[
+const DEFAULT_APPS=[  /* รายการเริ่มต้น — ใช้เมื่อเครื่องนี้ยังไม่เคยปรับแต่งรายการผ่าน ⚙️ (แอปใหม่ที่เพิ่มตรงนี้ในเวอร์ชันหน้า จะถูกเติมให้เครื่องที่ปรับแต่งไว้แล้วอัตโนมัติ) */
  {n:'เปรียบเทียบยอดรายวัน SDC vs SBK',d:'บันทึกและรายงานเปรียบเทียบยอดคน/รถ/MRT/EBM ระหว่าง SDC กับ SBK',i:'📊',c:'a',u:'SDC-vs-SBK-Daily-Compare/',g:['#4f46e5','#06b6d4']},
  {n:'ศูนย์รายงาน Personality',d:'รายงานผลตรวจบุคลิกภาพ รายวัน/สัปดาห์/เดือน/ปี นำเข้า Excel พร้อมรายงาน A4',i:'🏆',c:'a',u:'Security-Personality-Report/',g:['#f59e0b','#ef4444']},
  {n:'ตารางเวร รปภ.',d:'ตารางเวรและเช็คการมาทำงาน เจ้าหน้าที่รักษาความปลอดภัย',i:'🛡️',c:'s',u:'Security-Working-Schedule/',g:['#2563eb','#7c3aed']},
@@ -377,7 +514,32 @@ const APPS=[
 const CATS=[['all','ทั้งหมด'],['a','📊 วิเคราะห์ & รายงาน'],['s','🛡️ รปภ. & CCTV'],['p','🅿️ ลานจอด & ร้านค้า']];
 const $=s=>document.querySelector(s);
 const esc=x=>String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const byU=u=>APPS.find(a=>a.u===u);
+/* ===== 1.1 v28: รายการแอปปรับแต่งเองผ่านเมนูแอดมิน ⚙️ — บันทึกในเบราว์เซอร์ของเครื่องนี้ (ไม่ต้องมี Apps Script/เซิร์ฟเวอร์) =====
+   ลำดับการใช้ข้อมูล: รายการที่บันทึกในเครื่องนี้ → DEFAULT_APPS ในไฟล์นี้
+   ย้ายรายการไปเครื่องอื่น: ⚙️ → ⬇ สำรองไฟล์ แล้วไปเครื่องนั้น ⚙️ → ⬆ นำเข้าไฟล์ → 💾 บันทึก */
+const LS_APPS='hubAppsLocal';
+const HEX=/^#[0-9a-f]{6}$/i;
+const keyU=u=>String(u||'').trim().replace(/\/+$/,'').toLowerCase();   // เทียบลิงก์โดยไม่สน / ท้าย และตัวพิมพ์
+const isFull=u=>/^https?:\/\//i.test(String(u||''));
+const urlOf=a=>isFull(a.u)?a.u:B+a.u;
+/* อีโมจิบางตัวยาวหลาย code unit (🧑‍💼) — ตัดตาม grapheme ไม่ให้เหลือครึ่งตัว */
+function firstG(v){const t=String(v||'').trim();if(!t)return '';try{if(window.Intl&&Intl.Segmenter){const it=new Intl.Segmenter('th',{granularity:'grapheme'}).segment(t)[Symbol.iterator]().next();if(!it.done)return it.value.segment}}catch(e){}return Array.from(t)[0]}
+/* ตรวจ/จัดรูปข้อมูลแอปทุกแหล่ง (ชีต/ไฟล์นำเข้า/ฟอร์ม) — คืน null ถ้าใช้ไม่ได้ */
+function normApp(x){
+ if(!x||typeof x!=='object')return null;
+ const n=String(x.n||'').trim().slice(0,80);let u=String(x.u||'').trim();
+ if(!n||!u)return null;
+ if(isFull(u)){try{const t=new URL(u);if(!/^https?:$/.test(t.protocol))return null}catch(e){return null}}
+ else{u=u.replace(/^\/+/,'');if(!/^[\w.~%\-\/]+$/.test(u))return null;if(!u.endsWith('/'))u+='/'}
+ const c=['a','s','p'].includes(x.c)?x.c:'a';
+ const g=Array.isArray(x.g)&&HEX.test(x.g[0])&&HEX.test(x.g[1])?[x.g[0],x.g[1]]:['#4f46e5','#db2777'];
+ return {n,d:String(x.d||'').trim().slice(0,200),i:firstG(x.i)||'🔗',c,u,g,lock:!!x.lock,show:x.show!==false};
+}
+function dedupe(list){const seen=new Set();return list.filter(a=>{const k=keyU(a.u);if(seen.has(k))return false;seen.add(k);return true})}
+let ALL_APPS=dedupe(DEFAULT_APPS.map(normApp).filter(Boolean));   // ทุกแอป (รวมที่ซ่อน)
+let APPS=ALL_APPS.filter(a=>a.show);                                // แอปที่แสดงบน Hub
+let appsSrc='default',appsAt='',booted=false,knownDefaults=[];
+const byU=u=>APPS.find(a=>keyU(a.u)===keyU(u));
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let lastKey='',cat='all',embed=false,viewing=null,loadState='done',slowT=null,failT=null,entered=false;
 
@@ -425,13 +587,15 @@ function toggleTheme(){
 
 /* ===== 4. แสดงการ์ดแอป ===== */
 function render(){
+ if(cat!=='all'&&!APPS.some(a=>a.c===cat))cat='all';
  const list=APPS.filter(a=>cat==='all'||a.c===cat);
  const key=cat+'|'+list.map(a=>a.u).join(),an=key!==lastKey;lastKey=key; // เล่นอนิเมชันเฉพาะตอนผลลัพธ์เปลี่ยน
  $('#grid').innerHTML=list.map((a,x)=>`<button type="button" class="card${an?' anim':''}${a.lock?' locked':''}" style="background:linear-gradient(135deg,${a.g[0]},${a.g[1]});animation-delay:${x*60}ms" data-u="${esc(a.u)}" aria-label="เปิด ${esc(a.n)}">
   ${a.lock?'<span class="lock" title="ต้องใช้รหัสผ่านเจ้าหน้าที่">🔒<span class="lt"> รหัสผ่าน</span></span>':''}
   <div class="ic" aria-hidden="true" style="animation-delay:-${(x*0.45).toFixed(2)}s">${esc(a.i)}</div><h3>${esc(a.n)}</h3><p>${esc(a.d)}</p><span class="go">เปิดแอป →</span></button>`).join('');
  $('#empty').hidden=list.length>0;
- $('#tabs').innerHTML=CATS.map(c=>`<button type="button" role="tab" aria-selected="${c[0]===cat}" class="tab ${c[0]===cat?'on':''}" data-c="${c[0]}">${esc(c[1])}<span class="n">${c[0]==='all'?APPS.length:APPS.filter(a=>a.c===c[0]).length}</span></button>`).join('');
+ if(cat!=='all'&&!APPS.some(a=>a.c===cat))cat='all'; // หมวดที่ถูกลบแอปหมดแล้ว → กลับไปหมวดทั้งหมด
+ $('#tabs').innerHTML=CATS.filter(c=>c[0]==='all'||APPS.some(a=>a.c===c[0])).map(c=>`<button type="button" role="tab" aria-selected="${c[0]===cat}" class="tab ${c[0]===cat?'on':''}" data-c="${c[0]}">${esc(c[1])}<span class="n">${c[0]==='all'?APPS.length:APPS.filter(a=>a.c===c[0]).length}</span></button>`).join('');
  scheduleFit();
 }
 /* ===== v25: จัดการ์ดพอดีกรอบ =====
@@ -569,7 +733,7 @@ function loadFrame(url){
 function openApp(u,push=true){
  const a=byU(u);
  if(!a){toast('ไม่พบแอปที่ต้องการ อาจถูกย้ายหรือเปลี่ยนชื่อแล้ว','err');return false}
- const url=B+a.u;remember(a.u);
+ const url=urlOf(a);remember(a.u);
  if(!embed&&push){openTab(url);return true}
  viewing=a;$('#vtitle').textContent=a.i+' '+a.n;
  $('#viewer').classList.add('on');document.body.classList.add('noscroll');
@@ -589,12 +753,12 @@ function hideViewer(){
  clearTimeout(slowT);clearTimeout(failT);viewing=null;swapFrame('');setLoad('done');
 }
 function hashU(){const h=location.hash.slice(1);if(!h)return '';let s=h;try{s=decodeURIComponent(h)}catch(e){}return s.replace(/\/?$/,'/')}
-addEventListener('popstate',()=>{const u=hashU();if(u&&byU(u)){if(!viewing||viewing.u!==u)openApp(u,false)}else if(viewing)hideViewer()});
-function reloadFrame(){if(viewing)loadFrame(B+viewing.u)}
+addEventListener('popstate',()=>{const u=hashU();if(u&&byU(u)){if(!viewing||keyU(viewing.u)!==keyU(u))openApp(u,false)}else if(viewing)hideViewer()});
+function reloadFrame(){if(viewing)loadFrame(urlOf(viewing))}
 function modeLabel(){$('#mode').innerHTML=embed?'📥<span class="lbl"> เปิดในแอป</span>':'🗗<span class="lbl"> เปิดแท็บใหม่</span>';$('#mode').title=embed?'ตอนนี้: เปิดแอปภายในหน้านี้ (กดเพื่อเปลี่ยนเป็นแท็บใหม่)':'ตอนนี้: เปิดแอปในแท็บใหม่ (กดเพื่อเปลี่ยนเป็นเปิดในหน้านี้)'}
 
 /* ===== 7. Splash เข้าอัตโนมัติ ===== */
-function enter(){if(entered)return;entered=true;$('#splash').classList.add('hide');scheduleFit();countUp($('#nApps'),APPS.length);countUp($('#nCats'),CATS.length-1)}
+function enter(){if(entered)return;entered=true;$('#splash').classList.add('hide');scheduleFit();countUp($('#nApps'),APPS.length);countUp($('#nCats'),catCount())}
 function startSplash(){
  const s=performance.now(),pg=$('#pg');
  setTimeout(enter,SPLASH_MS); // สำรองไว้: rAF หยุดเมื่อแท็บอยู่เบื้องหลัง — กลับมาแล้วต้องเข้าได้ ไม่ค้างหน้า Splash
@@ -659,7 +823,7 @@ function handleEvents(){
   else toast(embed?'จะเปิดแอปภายในหน้านี้':'จะเปิดแอปในแท็บใหม่','ok')});
  $('#vback').addEventListener('click',closeViewer);
  $('#vreload').addEventListener('click',reloadFrame);$('#retry').addEventListener('click',reloadFrame);
- const ext=()=>{if(viewing)openTab(B+viewing.u)};$('#vopen').addEventListener('click',ext);$('#loadExt').addEventListener('click',ext);
+ const ext=()=>{if(viewing)openTab(urlOf(viewing))};$('#vopen').addEventListener('click',ext);$('#loadExt').addEventListener('click',ext);
  $('#splash').addEventListener('click',enter);
  addEventListener('keydown',e=>{
   if(!entered){if(!['Shift','Control','Alt','Meta'].includes(e.key))enter();return}
@@ -673,16 +837,254 @@ function handleEvents(){
   if(y>80&&!hd.classList.contains('sm'))hd.classList.add('sm');else if(y<10&&hd.classList.contains('sm'))hd.classList.remove('sm')})},{passive:true});
 }
 
+
+/* ===== 11. v28: ข้อมูลรายการแอป (บันทึกในเครื่องนี้) ===== */
+const catCount=()=>new Set(APPS.map(a=>a.c)).size;
+const defaultList=()=>dedupe(DEFAULT_APPS.map(normApp).filter(Boolean));
+function fmtAt(t){const d=new Date(t);if(isNaN(d))return '';const b=new Date(d.getTime()+7*3600000);return `${b.getUTCDate()}/${b.getUTCMonth()+1}/${b.getUTCFullYear()+543} ${p2(b.getUTCHours())}:${p2(b.getUTCMinutes())} น.`}
+function setApps(list,src,at){
+ ALL_APPS=list;APPS=list.filter(a=>a.show);appsSrc=src;appsAt=at||'';
+ if(booted){render();renderRecent();if(entered){$('#nApps').textContent=APPS.length;$('#nCats').textContent=catCount()}}
+ updateSrcInfo();
+}
+function updateSrcInfo(){
+ const el=$('#srcInfo');if(!el)return;
+ el.textContent=appsSrc==='local'?`รายการแอป: ปรับแต่งในเครื่องนี้${appsAt?' · บันทึกล่าสุด '+fmtAt(appsAt):''}`:'รายการแอป: ค่าเริ่มต้น';
+ el.classList.remove('err');
+}
+/* โหลดรายการที่บันทึกไว้ในเครื่อง
+   - ข้อมูลเสีย/ว่าง → ใช้ค่าเริ่มต้น (ไม่ทำให้หน้าเว็บพัง)
+   - แอปเริ่มต้นตัวใหม่ที่เพิ่มในไฟล์ HTML เวอร์ชันหลัง (ยังไม่เคยเห็นตอนบันทึก) → เติมท้ายรายการให้อัตโนมัติ
+     แต่แอปเริ่มต้นที่ผู้ใช้ "ลบเอง" จะไม่กลับมา เพราะจำรายการแอปเริ่มต้นที่เคยเห็นไว้ใน known */
+function loadLocal(){
+ let c=null;try{c=JSON.parse(ls.get(LS_APPS)||'null')}catch(e){c=null}
+ if(!c||!Array.isArray(c.apps)){knownDefaults=defaultList().map(a=>keyU(a.u));return false}
+ const list=dedupe(c.apps.map(normApp).filter(Boolean));
+ if(!list.length){knownDefaults=defaultList().map(a=>keyU(a.u));return false}
+ const known=new Set(Array.isArray(c.known)?c.known:list.map(a=>keyU(a.u)));
+ const have=new Set(list.map(a=>keyU(a.u)));
+ const added=defaultList().filter(a=>!known.has(keyU(a.u))&&!have.has(keyU(a.u)));
+ knownDefaults=[...new Set([...known,...defaultList().map(a=>keyU(a.u))])];
+ setApps(list.concat(added),'local',c.at);
+ if(added.length){saveLocal(ALL_APPS);console.info('เพิ่มแอปเริ่มต้นใหม่ให้อัตโนมัติ:',added.map(a=>a.n))}
+ return true;
+}
+function saveLocal(list){
+ const at=new Date().toISOString();
+ const ok=ls.set(LS_APPS,JSON.stringify({v:1,at,known:knownDefaults,apps:list}));
+ if(!ok)throw new Error('เบราว์เซอร์ไม่อนุญาตให้บันทึกข้อมูล (เช่น โหมดไม่ระบุตัวตน หรือถูกปิดการจัดเก็บข้อมูล)');
+ // อ่านกลับมาตรวจว่าบันทึกครบจริง
+ let back=null;try{back=JSON.parse(ls.get(LS_APPS)||'null')}catch(e){}
+ if(!back||!Array.isArray(back.apps)||back.apps.length!==list.length)throw new Error('ตรวจสอบหลังบันทึกไม่ผ่าน — พื้นที่จัดเก็บของเบราว์เซอร์อาจเต็ม');
+ setApps(list,'local',at);
+ return at;
+}
+function clearLocal(){try{localStorage.removeItem(LS_APPS)}catch(e){}knownDefaults=defaultList().map(a=>keyU(a.u));setApps(defaultList(),'default','')}
+
+/* ===== 12. เมนูแอดมิน ===== */
+const PRESETS=[['#4f46e5','#06b6d4'],['#f59e0b','#ef4444'],['#2563eb','#7c3aed'],['#db2777','#f97316'],['#16a34a','#84cc16'],['#0891b2','#7c3aed'],['#9333ea','#ec4899'],['#10b981','#06b6d4'],['#ea580c','#f59e0b'],['#0ea5e9','#4f46e5'],['#64748b','#334155']];
+const catName=c=>(CATS.find(x=>x[0]===c)||['',''])[1];
+let draft=[],dirty=false,editIdx=-1,saving=false;
+const admOpen=()=>!$('#adm').hidden;
+const clone=l=>l.map(a=>({...a,g:[a.g[0],a.g[1]]}));
+function setDirty(v){dirty=v;$('#admSave').disabled=!v||saving;$('#admT').textContent='⚙️ จัดการแอป'+(v?' • ยังไม่บันทึก':'')}
+function note(kind,html){$('#admNote').innerHTML=kind?`<div class="anote ${kind}">${html}</div>`:''}
+function connNote(){
+ if(!ls.set('__hubTest','1'))return note('err','<b>❌ เบราว์เซอร์นี้บันทึกข้อมูลไม่ได้</b>อาจเปิดโหมดไม่ระบุตัวตน หรือปิดการจัดเก็บข้อมูลของเว็บไซต์ — แก้ไขได้แต่จะบันทึกไม่ได้');
+ note('ok',`<b>💾 บันทึกในเบราว์เซอร์เครื่องนี้</b>${appsSrc==='local'?'กำลังใช้รายการที่ปรับแต่งไว้ · บันทึกล่าสุด '+esc(fmtAt(appsAt)):'กำลังใช้รายการเริ่มต้น'} — เครื่องอื่นไม่เปลี่ยนตาม ใช้ ⬇ สำรองไฟล์ / ⬆ นำเข้าไฟล์ เพื่อคัดลอกรายการไปเครื่องอื่น`);
+}
+function openAdmin(){
+ $('#adm').hidden=false;document.body.classList.add('noscroll');
+ draft=clone(ALL_APPS);setDirty(false);connNote();renderAdmin();
+ setTimeout(()=>$('#admAdd').focus({preventScroll:true}),60);
+}
+function closeAdmin(force){
+ if(dirty&&!force)return ask('ปิดโดยไม่บันทึก?','มีการแก้ไขที่ยังไม่ได้บันทึก หากปิดตอนนี้การแก้ไขทั้งหมดจะหายไป','ปิดโดยไม่บันทึก',()=>closeAdmin(true));
+ $('#adm').hidden=true;document.body.classList.remove('noscroll');draft=[];setDirty(false);$('#adminBtn').focus({preventScroll:true});
+}
+function renderAdmin(flash){
+ const shown=draft.filter(a=>a.show).length;
+ $('#admCnt').textContent=`ทั้งหมด ${draft.length} แอป · แสดงบน Hub ${shown} · ซ่อน ${draft.length-shown}`;
+ if(!draft.length){$('#admList').innerHTML='<div class="aempty">ยังไม่มีแอป — กด ＋ เพิ่มแอป</div>';return}
+ $('#admList').innerHTML=draft.map((a,i)=>`<div class="ar${a.show?'':' off'}${flash===i?' new':''}" data-i="${i}">
+  <span class="ah" title="ลากเพื่อเปลี่ยนลำดับ" aria-hidden="true">⠿</span><span class="anum">${i+1}</span>
+  <span class="aic" style="background:linear-gradient(135deg,${a.g[0]},${a.g[1]})">${esc(a.i)}</span>
+  <div class="ainfo"><b>${esc(a.n)}</b><small><span class="atag">${esc(catName(a.c))}</span>${a.show?'':'<span class="atag h">ซ่อนอยู่</span>'}${a.lock?'<span class="atag l">🔒</span>':''}${esc(urlOf(a))}</small></div>
+  <div class="aact"><label class="sw" title="${a.show?'แสดงบน Hub (กดเพื่อซ่อน)':'ซ่อนอยู่ (กดเพื่อแสดง)'}"><input type="checkbox" data-act="show" ${a.show?'checked':''} aria-label="แสดง ${esc(a.n)} บน Hub"><span></span></label>
+   <button type="button" data-act="up" ${i===0?'disabled':''} aria-label="เลื่อนขึ้น" title="เลื่อนขึ้น">↑</button><button type="button" data-act="down" ${i===draft.length-1?'disabled':''} aria-label="เลื่อนลง" title="เลื่อนลง">↓</button>
+   <button type="button" data-act="edit" aria-label="แก้ไข ${esc(a.n)}" title="แก้ไข">✏️</button><button type="button" data-act="del" aria-label="ลบ ${esc(a.n)}" title="ลบ">🗑</button></div></div>`).join('');
+}
+function moveItem(from,to){if(to<0||to>=draft.length||from===to)return;const [x]=draft.splice(from,1);draft.splice(to,0,x);setDirty(true)}
+/* ลากเรียงลำดับด้วย Pointer Events — ใช้ได้ทั้งเมาส์และนิ้ว (HTML5 drag&drop ใช้บน iPhone/Android ไม่ได้) */
+function initDrag(){
+ const L=$('#admList');let st=null;
+ L.addEventListener('pointerdown',e=>{
+  const h=e.target.closest('.ah');if(!h||e.button>0)return;
+  const row=h.closest('.ar');e.preventDefault();h.setPointerCapture(e.pointerId);
+  const pb=$('#adm .abody');st={row,h,pb,from:+row.dataset.i,startY:e.clientY,startScroll:pb.scrollTop,lastY:e.clientY,id:e.pointerId};row.classList.add('drag');
+ });
+ L.addEventListener('pointermove',e=>{
+  if(!st||e.pointerId!==st.id)return;
+  st.lastY=e.clientY;
+  // ชดเชยระยะที่รายการเลื่อนอัตโนมัติ — ไม่งั้นแถวที่ลากจะหลุดจากนิ้ว/เมาส์
+  st.row.style.transform=`translateY(${e.clientY-st.startY+(st.pb.scrollTop-st.startScroll)}px)`;
+  const rows=[...L.querySelectorAll('.ar')].filter(r=>r!==st.row);
+  let to=rows.length;
+  for(let k=0;k<rows.length;k++){const b=rows[k].getBoundingClientRect();if(e.clientY<b.top+b.height/2){to=k;break}}
+  st.to=to;
+  rows.forEach((r,k)=>{r.style.transform='';r.style.transition='transform .15s'});
+  // แสดงตำแหน่งที่จะวาง: ขยับแถวอื่นหลบให้เห็นช่องว่าง
+  const h=st.row.getBoundingClientRect().height+8;
+  rows.forEach((r,k)=>{const orig=+r.dataset.i;const idxNoDrag=orig>st.from?orig-1:orig;
+   if(idxNoDrag>=to&&orig<st.from)r.style.transform=`translateY(${h}px)`;
+   else if(idxNoDrag<to&&orig>st.from)r.style.transform=`translateY(${-h}px)`;});
+  const pb=st.pb,pr=pb.getBoundingClientRect(); // เลื่อนรายการอัตโนมัติเมื่อลากใกล้ขอบ
+  if(e.clientY<pr.top+48)pb.scrollTop-=14;else if(e.clientY>pr.bottom-48)pb.scrollTop+=14;
+ });
+ const end=e=>{
+  if(!st||e.pointerId!==st.id)return;
+  const {from,to}=st;st.row.classList.remove('drag');st=null;
+  if(to!=null&&to!==from){moveItem(from,to);renderAdmin(to)}else renderAdmin();
+ };
+ L.addEventListener('pointerup',end);L.addEventListener('pointercancel',end);
+}
+/* ---------- หน้าต่างยืนยัน (แทน confirm() ที่บล็อกหน้าเว็บ) ---------- */
+let askYes=null;
+function ask(title,msg,yesLabel,onYes,danger=true){
+ $('#acfT').textContent=title;$('#acfM').innerHTML=msg;$('#acfYes').textContent=yesLabel||'ยืนยัน';$('#acfYes').className='abtn '+(danger?'dng':'pri');
+ askYes=onYes;$('#acf').hidden=false;setTimeout(()=>$('#acfNo').focus(),40);
+}
+function closeAsk(){$('#acf').hidden=true;askYes=null}
+/* ---------- ฟอร์มเพิ่ม/แก้ไข ---------- */
+function openEditor(i){
+ editIdx=i;const a=i>=0?draft[i]:{n:'',d:'',i:'',c:cat!=='all'?cat:'a',u:'',g:PRESETS[(draft.length)%PRESETS.length].slice(),lock:false,show:true};
+ $('#aedT').textContent=i>=0?'✏️ แก้ไขแอป':'＋ เพิ่มแอปใหม่';
+ $('#fN').value=a.n;$('#fI').value=a.i;$('#fD').value=a.d;$('#fC').value=a.c;$('#fU').value=a.u.replace(/\/$/,'');
+ $('#fG1').value=a.g[0];$('#fG2').value=a.g[1];$('#fL').checked=a.lock;$('#fS').checked=a.show;
+ ['fN','fU'].forEach(id=>$('#'+id).removeAttribute('aria-invalid'));$('#fErr').textContent='';
+ $('#aed').hidden=false;updPreview();setTimeout(()=>$('#fN').focus(),50);
+}
+function formApp(){return {n:$('#fN').value,d:$('#fD').value,i:$('#fI').value,c:$('#fC').value,u:$('#fU').value,g:[$('#fG1').value,$('#fG2').value],lock:$('#fL').checked,show:$('#fS').checked}}
+function updPreview(){
+ const f=formApp(),a=normApp({...f,n:f.n||'ชื่อแอป',u:f.u||'example'})||{...f,i:'🔗',g:['#64748b','#334155']};
+ $('#fPrev').innerHTML=`<div class="card${a.lock?' locked':''}" style="background:linear-gradient(135deg,${HEX.test(f.g[0])?f.g[0]:'#64748b'},${HEX.test(f.g[1])?f.g[1]:'#334155'})">${a.lock?'<span class="lock">🔒<span class="lt"> รหัสผ่าน</span></span>':''}<div class="ic">${esc(a.i)}</div><h3>${esc(f.n||'ชื่อแอป')}</h3><p>${esc(f.d||'คำอธิบายแอป')}</p><span class="go">เปิดแอป →</span></div>`;
+ const u=f.u.trim();
+ $('#fUHint').innerHTML=u?(normApp({n:'x',u})?`จะเปิด: <a href="${esc(urlOf(normApp({n:'x',u})))}" target="_blank" rel="noopener">${esc(urlOf(normApp({n:'x',u})))}</a>`:'<span style="color:#ef4444">รูปแบบลิงก์ไม่ถูกต้อง — ใช้ชื่อโฟลเดอร์ (A-Z 0-9 - _ .) หรือ URL ที่ขึ้นต้นด้วย https://</span>')
+  :`ใส่ชื่อโฟลเดอร์บน GitHub Pages (จะเปิดที่ ${esc(B)}ชื่อโฟลเดอร์/) หรือวาง URL เต็มของเว็บอื่น`;
+ $('#fPres').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.g===f.g.join(',')));
+}
+function fieldErr(id,msg){$('#fErr').textContent=msg;$('#'+id).setAttribute('aria-invalid','true');$('#'+id).focus();return false}
+function submitEditor(e){
+ e.preventDefault();
+ const f=formApp();
+ if(!f.n.trim())return fieldErr('fN','กรุณากรอกชื่อแอป');
+ if(!f.u.trim())return fieldErr('fU','กรุณากรอกลิงก์ของแอป');
+ const a=normApp(f);
+ if(!a)return fieldErr('fU','รูปแบบลิงก์ไม่ถูกต้อง — ใช้ชื่อโฟลเดอร์ (A-Z 0-9 - _ .) หรือ URL ที่ขึ้นต้นด้วย https://');
+ const dup=draft.findIndex((x,k)=>k!==editIdx&&keyU(x.u)===keyU(a.u));
+ if(dup>=0)return fieldErr('fU',`ลิงก์นี้ซ้ำกับแอป "${draft[dup].n}" อยู่แล้ว`);
+ const dn=draft.findIndex((x,k)=>k!==editIdx&&x.n.trim().toLowerCase()===a.n.toLowerCase());
+ if(dn>=0)return fieldErr('fN',`มีแอปชื่อ "${draft[dn].n}" อยู่แล้ว กรุณาใช้ชื่ออื่น`);
+ let at;
+ if(editIdx>=0){draft[editIdx]=a;at=editIdx}else{draft.push(a);at=draft.length-1}
+ $('#aed').hidden=true;setDirty(true);renderAdmin(at);
+ const row=$(`#admList .ar[data-i="${at}"]`);if(row)row.scrollIntoView({block:'nearest',behavior:'smooth'});
+ toast(editIdx>=0?'แก้ไขแล้ว — กด 💾 บันทึก เพื่อใช้งานจริง':'เพิ่มแอปแล้ว — กด 💾 บันทึก เพื่อใช้งานจริง','ok',3200);
+}
+/* ---------- บันทึก ---------- */
+function doSave(){
+ if(saving||!dirty)return;
+ if(!draft.length)return toast('ต้องมีแอปอย่างน้อย 1 รายการ','err');
+ if(!draft.some(a=>a.show))return toast('ต้องแสดงบน Hub อย่างน้อย 1 แอป','err');
+ saving=true;$('#admSave').disabled=true;
+ try{
+  saveLocal(clone(draft));
+  setDirty(false);connNote();renderAdmin();
+  toast(`บันทึกเรียบร้อยแล้ว ✅ (${draft.length} แอป · แสดง ${draft.filter(a=>a.show).length})`,'ok',3200);
+ }catch(e){note('err','<b>❌ บันทึกไม่สำเร็จ</b>'+esc(e.message));toast('บันทึกไม่สำเร็จ','err',4000)}
+ finally{saving=false;$('#admSave').disabled=!dirty}
+}
+/* ---------- สำรอง/นำเข้า/ค่าเริ่มต้น/ตั้งค่า ---------- */
+function exportJson(){
+ try{const n=bkkNow(),name=`SBK_Center_Hub_apps_${n.y+543}-${p2(n.mo+1)}-${p2(n.d)}.json`;
+  const blob=new Blob([JSON.stringify({app:'SBK Center Hub',exportedAt:new Date().toISOString(),apps:draft},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  toast('ดาวน์โหลดไฟล์สำรองแล้ว: '+name,'ok',3500)}catch(e){toast('สร้างไฟล์สำรองไม่สำเร็จ','err')}
+}
+function importJson(file){
+ if(!file)return;if(file.size>1e6)return toast('ไฟล์ใหญ่เกินไป (เกิน 1 MB)','err');
+ const rd=new FileReader();
+ rd.onload=()=>{try{const j=JSON.parse(rd.result),raw=Array.isArray(j)?j:j&&j.apps;
+   if(!Array.isArray(raw))throw new Error('ไม่พบรายการแอปในไฟล์');
+   const list=dedupe(raw.map(normApp).filter(Boolean));if(!list.length)throw new Error('ไม่มีแอปที่ข้อมูลถูกต้องในไฟล์');
+   const bad=raw.length-list.length;
+   ask('นำเข้ารายการจากไฟล์?',`พบ ${list.length} แอป${bad?` (ข้าม ${bad} รายการที่ข้อมูลไม่ถูกต้องหรือซ้ำ)`:''}<br>รายการปัจจุบันในหน้านี้จะถูกแทนที่ (ยังไม่บันทึกจนกว่าจะกด 💾)`,'นำเข้า',()=>{draft=list;setDirty(true);renderAdmin();toast('นำเข้าแล้ว — ตรวจสอบแล้วกด 💾 บันทึก','ok')},false);
+  }catch(e){toast('นำเข้าไม่สำเร็จ: '+e.message,'err',4500)}};
+ rd.onerror=()=>toast('อ่านไฟล์ไม่สำเร็จ','err');rd.readAsText(file,'utf-8');
+}
+function initAdmin(){
+ $('#fC').innerHTML=CATS.filter(c=>c[0]!=='all').map(c=>`<option value="${c[0]}">${esc(c[1])}</option>`).join('');
+ $('#fPres').innerHTML=PRESETS.map(p=>`<button type="button" data-g="${p.join(',')}" style="background:linear-gradient(135deg,${p[0]},${p[1]})" aria-label="ชุดสี ${p.join(' ')}"></button>`).join('');
+ $('#adminBtn').addEventListener('click',openAdmin);
+ $('#admClose').addEventListener('click',()=>closeAdmin());
+ $('#admAdd').addEventListener('click',()=>openEditor(-1));
+ $('#admSave').addEventListener('click',doSave);
+ $('#admReload').addEventListener('click',()=>{
+  if(!dirty)return toast('ยังไม่มีการแก้ไข','info',1800);
+  ask('ยกเลิกการแก้ไข?','การแก้ไขทั้งหมดที่ยังไม่บันทึกจะหายไป และกลับไปใช้รายการที่บันทึกไว้ล่าสุด','ยกเลิกการแก้ไข',()=>{draft=clone(ALL_APPS);setDirty(false);renderAdmin();toast('ยกเลิกการแก้ไขแล้ว','ok')});
+ });
+ $('#admExport').addEventListener('click',exportJson);
+ $('#admImport').addEventListener('click',()=>{$('#admFile').value='';$('#admFile').click()});
+ $('#admFile').addEventListener('change',e=>importJson(e.target.files[0]));
+ $('#admReset').addEventListener('click',()=>ask('คืนค่ารายการเริ่มต้น?',`รายการจะถูกแทนที่ด้วยแอปเริ่มต้นในไฟล์ HTML (${DEFAULT_APPS.length} แอป) — แอปที่เพิ่มเองและลำดับที่จัดไว้จะหายไป<br>แนะนำกด ⬇ สำรองไฟล์ ก่อน · ยังไม่มีผลจนกว่าจะกด 💾`,'คืนค่าเริ่มต้น',()=>{draft=dedupe(DEFAULT_APPS.map(normApp).filter(Boolean));setDirty(true);renderAdmin();knownDefaults=defaultList().map(a=>keyU(a.u));toast('คืนค่าเริ่มต้นแล้ว — กด 💾 บันทึก เพื่อใช้งานจริง','ok')}));
+ $('#admList').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;const i=+b.closest('.ar').dataset.i,a=draft[i];if(!a)return;
+  const act=b.dataset.act;
+  if(act==='show'){a.show=b.checked;setDirty(true);renderAdmin();return}
+  if(act==='up'){moveItem(i,i-1);renderAdmin(i-1);const r=$(`#admList .ar[data-i="${i-1}"] [data-act=up]`);(r&&!r.disabled?r:$(`#admList .ar[data-i="${i-1}"] [data-act=down]`)).focus();return}
+  if(act==='down'){moveItem(i,i+1);renderAdmin(i+1);const r=$(`#admList .ar[data-i="${i+1}"] [data-act=down]`);(r&&!r.disabled?r:$(`#admList .ar[data-i="${i+1}"] [data-act=up]`)).focus();return}
+  if(act==='edit')return openEditor(i);
+  if(act==='del')return ask('ลบแอปนี้?',`ลบ <b>${esc(a.i)} ${esc(a.n)}</b> ออกจากรายการ<br><small>มีผลเมื่อกด 💾 บันทึก · ถ้าต้องการแค่ไม่ให้แสดงชั่วคราว ให้ใช้สวิตช์ "แสดงบน Hub" แทน</small>`,'ลบ',()=>{draft.splice(i,1);setDirty(true);renderAdmin();toast('ลบแล้ว — กด 💾 บันทึก เพื่อใช้งานจริง','ok')});
+ });
+ initDrag();
+ $('#aedForm').addEventListener('submit',submitEditor);
+ $('#aedCancel').addEventListener('click',()=>{$('#aed').hidden=true});
+ $('#aedTest').addEventListener('click',()=>{const a=normApp({...formApp(),n:'x'});if(!a)return fieldErr('fU','รูปแบบลิงก์ไม่ถูกต้อง');openTab(urlOf(a))});
+ ['fN','fI','fD','fC','fU','fG1','fG2','fL','fS'].forEach(id=>$('#'+id).addEventListener('input',()=>{$('#'+id).removeAttribute('aria-invalid');$('#fErr').textContent='';updPreview()}));
+ $('#fL').addEventListener('change',updPreview);$('#fS').addEventListener('change',updPreview);
+ $('#fPres').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const [g1,g2]=b.dataset.g.split(',');$('#fG1').value=g1;$('#fG2').value=g2;updPreview()});
+ $('#acfNo').addEventListener('click',closeAsk);
+ $('#acfYes').addEventListener('click',async()=>{const f=askYes;if(!f)return closeAsk();const b=$('#acfYes');b.disabled=true;try{const r=await f();if(r!==false)closeAsk()}finally{b.disabled=false}});
+ // แตะพื้นหลังเพื่อปิดหน้าต่างย่อย (ไม่รวมหน้าแอดมินหลัก กันปิดพลาดขณะลาก)
+ $('#aed').addEventListener('click',e=>{if(e.target===$('#aed'))$('#aed').hidden=true});
+ $('#acf').addEventListener('click',e=>{if(e.target===$('#acf'))closeAsk()});
+ // Esc ปิดหน้าต่างบนสุดก่อน — ดักก่อนตัวจัดการของ Hub (capture) ไม่ให้ไปปิดหน้าแอป
+ addEventListener('keydown',e=>{
+  if(!admOpen()&&$('#acf').hidden)return;
+  e.stopImmediatePropagation();
+  if(e.key!=='Escape')return;
+  if(!$('#acf').hidden)closeAsk();else if(!$('#aed').hidden)$('#aed').hidden=true;else closeAdmin();
+ },true);
+ // ปิดแท็บ/รีเฟรชขณะยังไม่บันทึก → เบราว์เซอร์ถามยืนยัน
+ addEventListener('beforeunload',e=>{if(admOpen()&&dirty){e.preventDefault();e.returnValue=''}});
+}
+
 /* ===== 10. เริ่มต้น ===== */
 function init(){
  embed=ls.get('hubEmbed')==='1';modeLabel();
  initTheme();startClock();
- setupIcons();render();renderRecent();handleEvents();sparkles();greet();setInterval(greet,60000);
+ loadLocal();booted=true;  // ใช้รายการที่ปรับแต่งไว้ในเครื่องนี้ (ถ้ามี) ไม่งั้นใช้ค่าเริ่มต้น
+ setupIcons();render();renderRecent();handleEvents();initAdmin();updateSrcInfo();
+ // แก้ไขจากอีกแท็บ/หน้าต่างของเครื่องเดียวกัน → อัปเดตตาม (ถ้ากำลังเปิดเมนูแอดมินอยู่ แจ้งเตือนแทนการแทนที่งานที่กำลังแก้)
+ addEventListener('storage',e=>{if(e.key!==LS_APPS)return;
+  if(admOpen()){note('warn','<b>⚠️ มีการบันทึกรายการจากอีกแท็บ</b>ถ้ากด 💾 ตอนนี้ จะบันทึกทับรายการจากแท็บนั้น — กด ↶ ยกเลิกการแก้ไข เพื่อดูรายการล่าสุด');if(!dirty){loadLocal()||clearLocal();draft=clone(ALL_APPS);renderAdmin()}return}
+  if(!loadLocal())clearLocal()});
+ sparkles();greet();setInterval(greet,60000);
  $('#net').classList.toggle('show',!navigator.onLine);
  try{initBg()}catch(e){console.warn('พื้นหลังอนิเมชันใช้ไม่ได้บนเครื่องนี้',e)}
  // เปิดด้วยลิงก์ตรง เช่น ...#CCTV-Database-V42 → เข้าแอปนั้นในหน้านี้ทันที ข้าม Splash
  const u=hashU();
- if(u&&byU(u)){entered=true;$('#splash').classList.add('hide');$('#nApps').textContent=APPS.length;$('#nCats').textContent=CATS.length-1;openApp(u,false)}
+ if(u&&byU(u)){entered=true;$('#splash').classList.add('hide');$('#nApps').textContent=APPS.length;$('#nCats').textContent=catCount();openApp(u,false)}
  else{if(u){toast('ไม่พบแอปตามลิงก์ที่เปิด','err');history.replaceState(null,'',location.pathname+location.search)}startSplash()}
 }
 try{init()}catch(e){reportError(e)}
